@@ -1,0 +1,19 @@
+{
+  "name": "page-replacer-visualization",
+  "version": "1.0.0",
+  "description": "Optimal Page Replacement  - visualization",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SomePeaceStudio/page-replacer-visualization.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SomePeaceStudio/page-replacer-visualization/issues"
+  },
+  "homepage": "https://github.com/SomePeaceStudio/page-replacer-visualization#readme"
+}
