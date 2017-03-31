@@ -1,6 +1,7 @@
 $(document).ready(function(){
+    // Execute FIFO button
     $("#run-fifo").click(function(){
-        // Read data from textarea
+        // Read input data
         var DATA = $('#page-data-input').val().split(',').map(Number);
         var BUFF_SIZE = parseInt($('#buffer-size-input').val());
         var FIFOstart = new Date(); 
@@ -10,7 +11,56 @@ $(document).ready(function(){
         $('#results-wrap').append("<h4>FIFO Time: " + (FIFOend-FIFOstart)/1000 + "s</h4>");
         $("#results-wrap").show();
     });
+    
+    // Execute Random data button
+    $("#rnd-gen").click(function(){
+        var length = $('#rnd-page-length').val();
+        var bufferMin = $('#rnd-buffer-min').val();
+        var bufferMax = $('#rnd-buffer-max').val();
+        genRandomData(length);
+        genRandomBufferSize(bufferMin,bufferMax);
+    });
 });
+
+// Return random integer in range [min,max]
+function getRandomInteger(min,max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+}
+
+// Place random page input data in textarea
+function genRandomData(length,min,max){
+    if (length === undefined){
+        length = 16;
+    }
+    if (min === undefined){
+        min = 1;
+    }
+    if (max === undefined){
+        max = 20;
+    }
+    var pageData = '';
+    for (i=1; i <= length; i++){
+        pageData += getRandomInteger(min,max);
+        if (i != length){
+            pageData += ',';
+        }
+    }
+    $('#page-data-input').val(pageData);
+}
+
+function genRandomBufferSize(min,max){
+    if (min === undefined){
+        var min = 3;
+    }
+    if (max === undefined){
+        var max = 6;
+    }
+    var num = getRandomInteger(parseInt(min),parseInt(max));
+    $('#buffer-size-input').val(num);
+}
+
+
+
 
 var BUFFER = [];
 var PAGE_FAULT = 0;

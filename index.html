@@ -28,15 +28,34 @@
         </p>
     </div>
     <div class="input-wrap">
-        <div class="input-field-wrap">
-        <h4>Page data</h4>
-    <textarea id="page-data-input" rows="10" cols="80">
-1,2,3,4,5,6,4,4,4,5,5,5,6,6,6,7
-    </textarea>
+        <div class="input-section">
+            <div class="input-field-wrap">
+            <h4>Page data</h4>
+        <textarea id="page-data-input" rows="10" cols="80">1,2,3,4,5,6,4,4,4,5,5,5,6,6,6,7
+        </textarea>
+            </div>
+            <div class="input-field-wrap">
+                <h4>Buffer size</h4>
+                <input id="buffer-size-input" value="3" type="number">
+            </div>
         </div>
-        <div class="input-field-wrap">
-            <h4>Buffer size</h4>
-            <input id="buffer-size-input" value="3" type="number">
+        <div class="input-section">
+            <div class="input-field-wrap">
+                <h4>Page length</h4>
+                <input id="rnd-page-length" value="16">
+            </div>
+            <div class="input-field-wrap">
+                <h4>Buffer size min</h4>
+                <input id="rnd-buffer-min" value="3">
+            </div>
+            <div class="input-field-wrap">
+                <h4>Buffer size max</h4>
+                <input id="rnd-buffer-max" value="6">
+            </div>
+            <div class="input-field-wrap">
+                <button id="rnd-gen">Random data</button>
+            </div>
+            
         </div>
     </div>
     
