@@ -1,7 +1,7 @@
 $(document).ready(function(){
-    $("#run").click(function(){
+    $("#run-fifo").click(function(){
         // Read data from textarea
-        var DATA = $('#page-input').val().split(',').map(Number)
+        var DATA = $('#page-data-input').val().split(',').map(Number)
         var FIFOstart = new Date(); 
         fifo(DATA,BUFF_SIZE);
         var FIFOend = new Date();

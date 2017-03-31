@@ -18,12 +18,32 @@
 <body>
     <h3>Optimal Page Replacer</h3>
     <!--<p>Input data: var DATA =[1,2,3,4,5,6,4,4,4,5,5,5,6,6,6,7]</p>-->
-    <textarea id="page-input" rows="10" cols="80">
+    <div class="input-wrap">
+        <div class="input-field-wrap">
+        <h4>Page data</h4>
+    <textarea id="page-data-input" rows="10" cols="80">
 1,2,3,4,5,6,4,4,4,5,5,5,6,6,6,7
     </textarea>
-    <div id="controls">
-        <button id="run">Run FIFO</button>
+        </div>
+        <div class="input-field-wrap">
+            <h4>Buffer size</h4>
+            <input id="buffer-size-input" type="number">
+        </div>
     </div>
+    
+    <div id="controls">
+        <button id="run-fifo">FIFO</button>
+        <button id="run-aging">Aging</button>
+        <button id="run-second-chance">Second chance</button>
+        <button id="run-clock">Clock</button>
+        <button id="run-clock-pro">Clock pro</button>
+        <button id="run-wsclock">WSclock</button>
+        <button id="run-car">CAR</button>
+        <button id="run-lru">LRU</button>
+        <button id="run-nfu">NFU</button>
+        <button id="run-random">Random</button>
+    </div>
+    
     <table>
         <tbody>
         </tbody>
