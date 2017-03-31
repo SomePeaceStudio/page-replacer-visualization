@@ -2,6 +2,30 @@ body{
     font-family: roboto, arial;
     margin: 0;
 }
+
+.authors-wrap{
+    position: absolute;
+    border: solid 1px black;
+    background: white;
+    font-family: monospace;
+    top: 5px;
+    right: 5px;
+    padding: 5px;
+    width: 129px;
+}
+
+.authors-wrap p{
+    display: none;
+}
+
+.authors-wrap button{
+    width: 100%;
+    font-size: 18px;
+    border: none;
+    background: none;
+    height: 30px;
+}
+
 h3{
     text-align: center;
 }
