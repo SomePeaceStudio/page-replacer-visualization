@@ -1,25 +1,7 @@
 $(document).ready(function(){
     // Execute FIFO button
     $("#run-fifo").click(function(){
-        // Read input data
-        var DATA = $('#page-data-input').val().split(',').map(Number);
-        var BUFF_SIZE = parseInt($('#buffer-size-input').val());
-        
-        // Mesure execution time
-        var FIFOstart = new Date(); 
-        fifo(DATA,BUFF_SIZE);
-        var FIFOend = new Date();
-        
-        //Add data to array
-        faultData['fifo'].push(PAGE_FAULT);
-        
-        // Append and display results
-        $("#results-wrap").append("<h4>FIFO : "+PAGE_FAULT+" page faults!</h4>");
-        $('#results-wrap').append("<h4>FIFO Time: " + (FIFOend-FIFOstart)/1000 + "s</h4>");
-        $("#results-wrap").show();
-        
-        // Update chart
-        updateChart();
+        runFifo();
     });
     
     // Execute Random data button
@@ -112,6 +94,29 @@ function updateChart(){
 var BUFFER = [];
 var PAGE_FAULT = 0;
 var STEP = 0;
+
+// Run fifo algo
+function runFifo(){
+    // Read input data
+        var DATA = $('#page-data-input').val().split(',').map(Number);
+        var BUFF_SIZE = parseInt($('#buffer-size-input').val());
+        
+        // Mesure execution time
+        var FIFOstart = new Date(); 
+        fifo(DATA,BUFF_SIZE);
+        var FIFOend = new Date();
+        
+        //Add data to array
+        faultData['fifo'].push(PAGE_FAULT);
+        
+        // Append and display results
+        $("#results-wrap").append("<h4>FIFO : "+PAGE_FAULT+" page faults!</h4>");
+        $('#results-wrap').append("<h4>FIFO Time: " + (FIFOend-FIFOstart)/1000 + "s</h4>");
+        $("#results-wrap").show();
+        
+        // Update chart
+        updateChart();
+}
 
 function fifo(data, bs){ 
     pf = 0;
