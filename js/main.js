@@ -6,14 +6,13 @@ $(document).ready(function(){
         var FIFOstart = new Date(); 
         fifo(DATA,BUFF_SIZE);
         var FIFOend = new Date();
-        $("#results").append("<h4>FIFO : "+PAGE_FAULT+" page faults!</h4>");
-        $('#results').append("<h4>FIFO Time: " + (FIFOend-FIFOstart)/1000 + "s</h4>");
-        $("#results").show();
+        $("#results-wrap").append("<h4>FIFO : "+PAGE_FAULT+" page faults!</h4>");
+        $('#results-wrap').append("<h4>FIFO Time: " + (FIFOend-FIFOstart)/1000 + "s</h4>");
+        $("#results-wrap").show();
     });
 });
 
 var BUFFER = [];
-//var BUFF_SIZE = 3;
 var PAGE_FAULT = 0;
 var STEP = 0;
 
