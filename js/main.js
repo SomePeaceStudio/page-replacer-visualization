@@ -1,18 +1,19 @@
 $(document).ready(function(){
     $("#run-fifo").click(function(){
         // Read data from textarea
-        var DATA = $('#page-data-input').val().split(',').map(Number)
+        var DATA = $('#page-data-input').val().split(',').map(Number);
+        var BUFF_SIZE = parseInt($('#buffer-size-input').val());
         var FIFOstart = new Date(); 
         fifo(DATA,BUFF_SIZE);
         var FIFOend = new Date();
         $("#results").append("<h4>FIFO : "+PAGE_FAULT+" page faults!</h4>");
-        $('#results').append("<h4>FIFO Time: " + (FIFOend-FIFOstart)/1000 + "s</h4>")
+        $('#results').append("<h4>FIFO Time: " + (FIFOend-FIFOstart)/1000 + "s</h4>");
         $("#results").show();
     });
 });
 
 var BUFFER = [];
-var BUFF_SIZE = 3;
+//var BUFF_SIZE = 3;
 var PAGE_FAULT = 0;
 var STEP = 0;
 
