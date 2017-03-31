@@ -12,6 +12,24 @@ $(document).ready(function(){
         genRandomData(length);
         genRandomBufferSize(bufferMin,bufferMax);
     });
+    
+    //Run all n times
+    $("#run-all").click(function(){
+        var times = parseInt($('#execute-times').val());
+        console.debug(times);
+        for (var i=0; i< times; i++){
+            console.debug('going');
+            var length = $('#rnd-page-length').val();
+            var bufferMin = $('#rnd-buffer-min').val();
+            var bufferMax = $('#rnd-buffer-max').val();
+            genRandomData(length);
+            genRandomBufferSize(bufferMin,bufferMax);
+            
+            runFifo();
+            // TODO: add other algo functions
+        }
+        
+    })
 });
 
 var faultData = {
