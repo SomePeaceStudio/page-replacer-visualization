@@ -4,9 +4,11 @@ $(document).ready(function(){
         // Read input data
         var DATA = $('#page-data-input').val().split(',').map(Number);
         var BUFF_SIZE = parseInt($('#buffer-size-input').val());
+        // Mesure execution time
         var FIFOstart = new Date(); 
         fifo(DATA,BUFF_SIZE);
         var FIFOend = new Date();
+        // Append and display results
         $("#results-wrap").append("<h4>FIFO : "+PAGE_FAULT+" page faults!</h4>");
         $('#results-wrap').append("<h4>FIFO Time: " + (FIFOend-FIFOstart)/1000 + "s</h4>");
         $("#results-wrap").show();
