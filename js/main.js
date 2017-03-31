@@ -118,15 +118,35 @@ function getAveragePageFault(algo){
 // Update page faults chart
 function updateChart(){
     chartData[0].y = getAveragePageFault('fifo');
+    chartData[0].toolTipContent = "{label}: {y} page faults \n"+faultData['fifo'].length+" executions";
+    
     chartData[1].y = getAveragePageFault('aging');
+    chartData[1].toolTipContent = "{label}: {y} page faults \n"+faultData['aging'].length+" executions";
+    
     chartData[2].y = getAveragePageFault('secondChance');
+    chartData[2].toolTipContent = "{label}: {y} page faults \n"+faultData['secondChance'].length+" executions";
+    
     chartData[3].y = getAveragePageFault('clock');
+    chartData[3].toolTipContent = "{label}: {y} page faults \n"+faultData['clock'].length+" executions";
+    
     chartData[4].y = getAveragePageFault('clockPro');
+    chartData[4].toolTipContent = "{label}: {y} page faults \n"+faultData['clockPro'].length+" executions";
+    
     chartData[5].y = getAveragePageFault('wsclock');
+    chartData[5].toolTipContent = "{label}: {y} page faults \n"+faultData['wsclock'].length+" executions";
+    
     chartData[6].y = getAveragePageFault('car');
+    chartData[6].toolTipContent = "{label}: {y} page faults \n"+faultData['car'].length+" executions";
+    
     chartData[7].y = getAveragePageFault('lru');
+    chartData[7].toolTipContent = "{label}: {y} page faults \n"+faultData['lru'].length+" executions";
+    
     chartData[8].y = getAveragePageFault('nfu');
+    chartData[8].toolTipContent = "{label}: {y} page faults \n"+faultData['nfu'].length+" executions";
+    
     chartData[9].y = getAveragePageFault('random');
+    chartData[9].toolTipContent = "{label}: {y} page faults \n"+faultData['random'].length+" executions";
+    
     faultChart.render();
 }
 
