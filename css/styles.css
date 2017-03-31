@@ -1,11 +1,41 @@
 body{
-    font-family: roboto, arial
+    font-family: roboto, arial;
+    margin: 0;
 }
 h3{
     text-align: center;
 }
+
+.input-wrap{
+    /*width: 100%;*/
+    padding: 5px;
+}
+
+.input-wrap:after{
+    content: '';
+    display: block;
+    float: none;
+    clear: both;
+}
+
+.input-field-wrap{
+    float: left;
+    margin: 10px;
+}
+
+.input-field-wrap h4{
+    margin-top: 5px;
+    margin-bottom: 2px;
+}
+
+#page-data-input{
+    /*width: 100%;*/
+}
+
 button{
     margin: auto;
+    width: 120px;
+    height: 40px;
 }
 
 #controls{
