@@ -49,7 +49,7 @@ h3{
     border: none;
 }
 
-.input-wrap:after{
+.input-wrap:after, .chart-wrap:after{
     content: '';
     display: block;
     float: none;

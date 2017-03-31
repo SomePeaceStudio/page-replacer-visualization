@@ -4,14 +4,22 @@ $(document).ready(function(){
         // Read input data
         var DATA = $('#page-data-input').val().split(',').map(Number);
         var BUFF_SIZE = parseInt($('#buffer-size-input').val());
+        
         // Mesure execution time
         var FIFOstart = new Date(); 
         fifo(DATA,BUFF_SIZE);
         var FIFOend = new Date();
+        
+        //Add data to array
+        faultData['fifo'].push(PAGE_FAULT);
+        
         // Append and display results
         $("#results-wrap").append("<h4>FIFO : "+PAGE_FAULT+" page faults!</h4>");
         $('#results-wrap').append("<h4>FIFO Time: " + (FIFOend-FIFOstart)/1000 + "s</h4>");
         $("#results-wrap").show();
+        
+        // Update chart
+        updateChart();
     });
     
     // Execute Random data button
@@ -23,6 +31,19 @@ $(document).ready(function(){
         genRandomBufferSize(bufferMin,bufferMax);
     });
 });
+
+var faultData = {
+    'fifo':[],
+    'aging':[],
+    'secondChance':[],
+    'clock':[],
+    'clockPro':[],
+    'wsclock':[],
+    'car':[],
+    'lru':[],
+    'nfu':[],
+    'random':[]
+};
 
 // Return random integer in range [min,max]
 function getRandomInteger(min,max){
@@ -61,8 +82,32 @@ function genRandomBufferSize(min,max){
     $('#buffer-size-input').val(num);
 }
 
+// Get average page faults
+function getAveragePageFault(algo){
+    if (faultData[algo].length == 0){
+        return 0;
+    }
+    var sum = 0;
+    for (i in faultData[algo]){
+        sum += parseInt(faultData[algo][i]);
+    }
+    return sum/faultData[algo].length;
+}
 
-
+// Update page faults chart
+function updateChart(){
+    chartData[0].y = getAveragePageFault('fifo');
+    chartData[1].y = getAveragePageFault('aging');
+    chartData[2].y = getAveragePageFault('secondChance');
+    chartData[3].y = getAveragePageFault('clock');
+    chartData[4].y = getAveragePageFault('clockPro');
+    chartData[5].y = getAveragePageFault('wsclock');
+    chartData[6].y = getAveragePageFault('car');
+    chartData[7].y = getAveragePageFault('lru');
+    chartData[8].y = getAveragePageFault('nfu');
+    chartData[9].y = getAveragePageFault('random');
+    faultChart.render();
+}
 
 var BUFFER = [];
 var PAGE_FAULT = 0;
@@ -82,7 +127,7 @@ function fifo(data, bs){
         // If page is in buffer/history
         idx = findPage(data[i], history);
         if(idx != -1){
-            console.log("Element in ");
+//            console.log("Element in ");
             history[idx].age = age;
             continue;
         }
