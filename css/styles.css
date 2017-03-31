@@ -93,3 +93,15 @@ tr:nth-child(odd){
 tr:nth-child(even){
     background: #949494;
 }
+
+#progress-bar{
+    /*height: 10px;*/
+    background: gray;
+    margin: 5px;
+}
+
+#bar{
+    width: 0%;
+    height: 10px;
+    background: #0046b2;
+}

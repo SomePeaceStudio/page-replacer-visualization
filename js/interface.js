@@ -39,7 +39,12 @@ var faultChart = new CanvasJS.Chart("chart-container",{
 
     ]
 });
+
 function toggleAuthorsFrame(){
     $('#author-list').toggle();
+}
+
+function setProgressBar(percent){
+    $('#bar').css('width',percent+'%');
 }
 

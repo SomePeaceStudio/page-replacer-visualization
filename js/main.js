@@ -16,20 +16,22 @@ $(document).ready(function(){
     //Run all n times
     $("#run-all").click(function(){
         var times = parseInt($('#execute-times').val());
-        console.debug(times);
-        for (var i=0; i< times; i++){
-            console.debug('going');
-            var length = $('#rnd-page-length').val();
-            var bufferMin = $('#rnd-buffer-min').val();
-            var bufferMax = $('#rnd-buffer-max').val();
-            genRandomData(length);
-            genRandomBufferSize(bufferMin,bufferMax);
-            
-            runFifo();
-            // TODO: add other algo functions
-        }
+        setProgressBar(0);
         
-    })
+        for (var i=1; i <= times; i++){
+            setTimeout(function(i){
+                var length = $('#rnd-page-length').val();
+                var bufferMin = $('#rnd-buffer-min').val();
+                var bufferMax = $('#rnd-buffer-max').val();
+                genRandomData(length);
+                genRandomBufferSize(bufferMin,bufferMax);
+
+                runFifo();
+                // TODO: add other algo functions
+                setProgressBar((i/times)*100)
+            },0,i);
+        }
+    });
 });
 
 var faultData = {
@@ -62,7 +64,7 @@ function genRandomData(length,min,max){
         max = 20;
     }
     var pageData = '';
-    for (i=1; i <= length; i++){
+    for (var i=1; i <= length; i++){
         pageData += getRandomInteger(min,max);
         if (i != length){
             pageData += ',';
