@@ -112,7 +112,6 @@ tr:nth-child(even){
 #progress-bar{
     /*height: 10px;*/
     background: gray;
-    margin: 5px;
 }
 
 #bar{
