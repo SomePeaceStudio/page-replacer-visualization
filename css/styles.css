@@ -105,3 +105,16 @@ tr:nth-child(even){
     height: 10px;
     background: #0046b2;
 }
+
+#page-replace-visualizer{
+    margin-top: 410px;
+
+}
+.red {
+    color: red;
+    font-weight: bold;
+}
+.green {
+    color: green;
+    font-weight: bold;
+}
