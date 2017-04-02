@@ -12,6 +12,16 @@ $(document).ready(function(){
     $("#run-lru").click(function(){
         runLru();
     });
+    
+    // Execute Random button
+    $("#run-random").click(function(){
+        runRandom();
+    });
+    
+    // Execute Optimal button
+    $("#run-optimal").click(function(){
+        runOptimal();
+    });
 
     // Execute Random data button
     $("#rnd-gen").click(function(){
@@ -47,6 +57,7 @@ $(document).ready(function(){
 
                 runFifo();
                 runLru();
+                runRandom();
                 // TODO: add other algo functions
                 setProgressBar((i/times)*100)
             },0,i);
@@ -64,12 +75,13 @@ var faultData = {
     'car':[],
     'lru':[],
     'nfu':[],
-    'random':[]
+    'random':[],
+    'optimal':[]
 };
 
 // Return random integer in range [min,max]
 function getRandomInteger(min,max){
-    return Math.floor(Math.random()*(max-min+1))+min;
+    return Math.floor(Math.random()*(max))+min;
 }
 
 // Place random page input data in textarea
@@ -148,6 +160,9 @@ function updateChart(){
     chartData[9].y = getAveragePageFault('random');
     chartData[9].toolTipContent = "{label}: {y} page faults \n"+faultData['random'].length+" executions";
     
+    chartData[10].y = getAveragePageFault('optimal');
+    chartData[10].toolTipContent = "{label}: {y} page faults \n"+faultData['random'].length+" executions";
+    
     faultChart.render();
 }
 
@@ -205,6 +220,66 @@ function runLru(){
         $("#results-wrap").show();
         $area.append("<h4>LRU : "+results.pageFaults+" page faults!</h4>");
         $area.append("<h4>LRU Time: " + (lruEnd-lruStart)/1000 + "s</h4>");
+        $area.append("<hr>");
+        
+        // Update chart
+        updateChart();
+}
+
+// Run Random algo
+function runRandom(){
+    // Read input data
+        var data = $('#page-data-input').val().split(',').map(Number);
+        var buffSize = parseInt($('#buffer-size-input').val());
+        
+        // Mesure execution time
+        var randStart = new Date(); 
+        var results = random(data,buffSize);
+        var randEnd = new Date();
+        
+        // Return if erros where found
+        if(results == null){
+            console.log("Error in Random");
+            return;
+        }
+
+        // Add data to array
+        faultData['random'].push(results.pageFaults);
+        
+        // Append and display results
+        $("#results-wrap").show();
+        $area.append("<h4>Random : "+results.pageFaults+" page faults!</h4>");
+        $area.append("<h4>Random Time: " + (randEnd-randStart)/1000 + "s</h4>");
+        $area.append("<hr>");
+        
+        // Update chart
+        updateChart();
+}
+
+// Run Optimal algo
+function runOptimal(){
+    // Read input data
+        var data = $('#page-data-input').val().split(',').map(Number);
+        var buffSize = parseInt($('#buffer-size-input').val());
+        
+        // Mesure execution time
+        var Start = new Date(); 
+        var results = optimal(data,buffSize);
+        var End = new Date();
+        
+        // Return if erros where found
+        if(results == null){
+            console.log("Error in Optimal");
+            return;
+        }
+
+        // Add data to array
+        faultData['optimal'].push(results.pageFaults);
+        
+        // Append and display results
+        $("#results-wrap").show();
+        $area.append("<h4>Optimal : "+results.pageFaults+" page faults!</h4>");
+        $area.append("<h4>Optimal Time: " + (End-Start)/1000 + "s</h4>");
         $area.append("<hr>");
         
         // Update chart
@@ -439,7 +514,175 @@ function lru(data, bs){
     return {pageFaults:pageFaults,pageHits:pageHits};
 }
 
-//---- LRU END ---- //
+// ========================================================================= //
+// ------------------------------ Random ------------------------------------- //
+// ========================================================================= //
+
+// Random algorithm
+// int random(data, buffer size)
+// return: 
+//      >=0 : { page faults:int, page hits: int } 
+//      null  : error
+function random(data, bs){ 
+    var buffer = { 
+                    data:[], // buffer data
+                    pageFaultIdx: -1    // index where was page fault
+                                        // -1 for page hit
+                 } 
+    var pageFaults = 0;
+    var pageHits = 0;
+
+    var history = []; // page replacement history
+    var age = 0; // page place time
+    var idx; // Index for element of interest
+
+    renderBufferInit(bs);
+    for (var i = 0; i < data.length; i++){
+        // Render buffer after first cycle
+        if (i>0){
+            renderBuffer(data[i-1],buffer,bs); 
+        }
+
+        // If page is in buffer/history: page hit
+        idx = findPage(data[i], history);
+        if(idx != -1){
+            updateBuffer(buffer,history,-1);
+            pageHits++;
+            continue;
+        }
+
+        // If buffer not full: add new page
+        if(buffer.data.length<bs){
+            history.push({page:data[i],age: age})
+            updateBuffer(buffer,history,history.length-1);
+            pageFaults++;
+            age++;
+            continue;
+        }
+        
+        // If page is not in buffer: page fault
+        idx = getRandomInteger(0,bs-1);//findOldestIndex(history);
+        // If element was not found
+        if(idx == -1){
+            return null; // Error state
+        }
+        history[idx].page = data[i];
+        history[idx].age = age;
+        pageFaults++;
+        age++;
+        updateBuffer(buffer,history,idx);
+    }
+    renderBuffer(data[data.length-1],buffer,bs);
+    return {pageFaults:pageFaults,pageHits:pageHits};
+}
+
+//---- Random END ---- //
+
+
+// ========================================================================= //
+// ------------------------------ Optimal ---------------------------------- //
+// ========================================================================= //
+
+
+// Fing oldest indes in history object
+function findOptimalPageToReplace(data, history){
+    var index = null;// index of element to replace
+    var notUsedTheLongest = 0;
+
+    // Abort if there is no elements in history
+    if(history.length<1){
+        return -1;
+    }
+    
+    for (var i = 0; i < history.length; i++)
+    {
+        var currElem = history[i].page;
+        var elemFound = false;
+        for (var j = 0; j < data.length; j++)
+        {
+            if(currElem == data[j])
+            {
+                elemFound = true;
+                if(notUsedTheLongest < j)
+                {
+                    notUsedTheLongest = j;
+                    index = i;
+                }
+                
+                break;
+            }
+        }
+        
+        if (elemFound === false)
+        {
+            index = i;
+            return index;
+        }
+    }
+    
+    return index;
+}
+
+// Random algorithm
+// int random(data, buffer size)
+// return: 
+//      >=0 : { page faults:int, page hits: int } 
+//      null  : error
+function optimal(data, bs){ 
+    var buffer = { 
+                    data:[], // buffer data
+                    pageFaultIdx: -1    // index where was page fault
+                                        // -1 for page hit
+                 } 
+    var pageFaults = 0;
+    var pageHits = 0;
+
+    var history = []; // page replacement history
+    var age = 0; // page place time
+    var idx; // Index for element of interest
+
+    renderBufferInit(bs);
+    for (var i = 0; i < data.length; i++){
+        // Render buffer after first cycle
+        if (i>0){
+            renderBuffer(data[i-1],buffer,bs); 
+        }
+
+        // If page is in buffer/history: page hit
+        idx = findPage(data[i], history);
+        if(idx != -1){
+            updateBuffer(buffer,history,-1);
+            pageHits++;
+            continue;
+        }
+
+        // If buffer not full: add new page
+        if(buffer.data.length<bs){
+            history.push({page:data[i],age: age})
+            updateBuffer(buffer,history,history.length-1);
+            pageFaults++;
+            age++;
+            continue;
+        }
+        
+        // If page is not in buffer: page fault
+        idx = findOptimalPageToReplace(data.slice(i,data.length),history);
+        // If element was not found
+        if(idx == -1){
+            return null; // Error state
+        }
+        history[idx].page = data[i];
+        history[idx].age = age;
+        pageFaults++;
+        age++;
+        updateBuffer(buffer,history,idx);
+    }
+    renderBuffer(data[data.length-1],buffer,bs);
+    return {pageFaults:pageFaults,pageHits:pageHits};
+}
+
+//---- Optimal END ---- //
+
 
 // ========================================================================= //
 // -------------------------- NFU/LFU -------------------------------------- //
