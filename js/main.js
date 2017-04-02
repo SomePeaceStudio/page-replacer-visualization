@@ -58,6 +58,7 @@ $(document).ready(function(){
                 runFifo();
                 runLru();
                 runRandom();
+                runOptimal();
                 // TODO: add other algo functions
                 setProgressBar((i/times)*100);
             },0,i);
