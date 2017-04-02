@@ -181,9 +181,10 @@ function runLru(){
         faultData['lru'].push(results.pageFaults);
         
         // Append and display results
-        $("#results-wrap").append("<h4>LRU : "+results.pageFaults+" page faults!</h4>");
-        $('#results-wrap').append("<h4>LRU Time: " + (lruEnd-lruStart)/1000 + "s</h4>");
         $("#results-wrap").show();
+        $area.append("<h4>LRU : "+results.pageFaults+" page faults!</h4>");
+        $area.append("<h4>LRU Time: " + (lruEnd-lruStart)/1000 + "s</h4>");
+        $area.append("<hr>");
         
         // Update chart
         updateChart();

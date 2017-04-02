@@ -13,7 +13,7 @@ body{
     width: 145px;
     height: 30px;
     overflow: hidden;
-    cursor: pointer;
+    cursor: default;
     transition: all ease-in 0.3s;
 }
 
