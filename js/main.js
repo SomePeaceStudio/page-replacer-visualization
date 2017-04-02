@@ -46,8 +46,9 @@ $(document).ready(function(){
                 genRandomBufferSize(bufferMin,bufferMax);
 
                 runFifo();
+                runLru();
                 // TODO: add other algo functions
-                setProgressBar((i/times)*100)
+                setProgressBar((i/times)*100);
             },0,i);
         }
     });
