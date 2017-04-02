@@ -34,6 +34,9 @@ $(document).ready(function(){
     
     //Run all n times
     $("#run-all").click(function(){
+        setTimeout(function(){
+            showSpinner();
+        },0)
         var times = parseInt($('#execute-times').val());
         if (times < 0) {
             times = 0;
@@ -46,8 +49,8 @@ $(document).ready(function(){
         if (times === 0) {
             $('#results-wrap').hide();
         }
-        
-        for (var i=1; i <= times; i++){
+        setTimeout(function(){
+            for (var i=1; i <= times; i++){
             setTimeout(function(i){
                 var length = $('#rnd-page-length').val();
                 var bufferMin = $('#rnd-buffer-min').val();
@@ -61,8 +64,15 @@ $(document).ready(function(){
                 runOptimal();
                 // TODO: add other algo functions
                 setProgressBar((i/times)*100);
+                if (i == times){
+                    setTimeout(function(){
+                        hideSpinner();
+                    },0);
+                }
             },0,i);
         }
+        },10)
+        
     });
 });
 
@@ -127,6 +137,14 @@ function getAveragePageFault(algo){
         sum += parseInt(faultData[algo][i]);
     }
     return sum/faultData[algo].length;
+}
+
+function showSpinner(){
+    $('#spinner').show();
+}
+
+function hideSpinner(){
+    $('#spinner').hide();
 }
 
 // Update page faults chart
