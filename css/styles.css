@@ -85,6 +85,9 @@ button{
     width: 120px;
     height: 40px;
 }
+#run-all, #rnd-gen {
+    width: 173px;
+}
 
 #controls{
     text-align: center;
