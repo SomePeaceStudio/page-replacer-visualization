@@ -1,101 +1,102 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="en">
-<head>
-    <meta charset="utf-8">
+    <head>
+        <meta charset="utf-8">
 
-    <title>Optimal Page Replacer</title>
-    <meta name="description" content="Optimal Page Replacer">
+        <title>Optimal Page Replacer</title>
+        <meta name="description" content="Optimal Page Replacer">
 
-    <script src="node_modules/jquery/dist/jquery.js"></script>
-    <link rel="stylesheet" href="css/styles.css">
+        <script src="node_modules/jquery/dist/jquery.js"></script>
+        <link rel="stylesheet" href="css/styles.css">
 
-    <!--[if lt IE 9]>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
-    <![endif]-->
-</head>
+        <!--[if lt IE 9]>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+        <![endif]-->
+    </head>
 
-<body>
-    <h3>Optimal Page Replacer</h3>
-    <div class="authors-wrap">
-        <button id="authors-button">Authors</button>
-        <p id="author-list">
-            Sintija Borskoviča<br>
-            Jēkabs Bušs<br>
-            Alberts Diterihs<br>
-            Jānis Kajaks<br>
-            Kristaps Innuss
-        </p>
-    </div>
-    <div class="input-wrap">
-        <div class="input-section">
-            <div class="input-field-wrap">
-            <h4>Page data</h4>
-        <textarea id="page-data-input" rows="10" cols="80">1,2,3,4,5,6,4,4,4,5,5,5,6,6,6,7
-        </textarea>
+    <body>
+        <h1>Optimal Page Replacer</h1>
+        <div class="authors-wrap">
+            <button id="authors-button">Authors</button>
+            <ul id="author-list">
+                <li>Sintija Borskoviča</li>
+                <li>Jēkabs Bušs</li>
+                <li>Alberts Diterihs</li>
+                <li>Jānis Kajaks</li>
+                <li>Kristaps Innuss</li>
+            </ul>
+        </div>
+        <div class="input-wrap">
+            <div class="input-section">
+                <div class="input-field-wrap">
+                    <h4>Page data</h4>
+                    <textarea id="page-data-input" rows="10" cols="80">1,2,3,4,5,6,4,4,4,5,5,5,6,6,6,7</textarea>
+                </div>
+                <div class="input-field-wrap">
+                    <h4>Buffer size</h4>
+                    <input id="buffer-size-input" value="3" type="number">
+                </div>
             </div>
-            <div class="input-field-wrap">
-                <h4>Buffer size</h4>
-                <input id="buffer-size-input" value="3" type="number">
+            <div class="input-section">
+                <div class="input-field-wrap">
+                    <h4>Page length</h4>
+                    <input id="rnd-page-length" value="16">
+                </div>
+                <div class="input-field-wrap">
+                    <h4>Buffer size min</h4>
+                    <input id="rnd-buffer-min" value="3">
+                </div>
+                <div class="input-field-wrap">
+                    <h4>Buffer size max</h4>
+                    <input id="rnd-buffer-max" value="6">
+                </div>
+                <div class="input-field-wrap">
+                    <button id="rnd-gen">Random data</button>
+                </div>
+
+            </div>
+            <div class="input-section">
+                <div class="input-field-wrap">
+                    <h4>Execution times</h4>
+                    <input id="execute-times" value="100">
+                </div>
+                <div class="input-field-wrap">
+                    <button id="run-all">Execute</button>
+                </div>
+                <div id="progress-bar">
+                    <div id="bar"></div>
+                </div>
             </div>
         </div>
-        <div class="input-section">
-            <div class="input-field-wrap">
-                <h4>Page length</h4>
-                <input id="rnd-page-length" value="16">
-            </div>
-            <div class="input-field-wrap">
-                <h4>Buffer size min</h4>
-                <input id="rnd-buffer-min" value="3">
-            </div>
-            <div class="input-field-wrap">
-                <h4>Buffer size max</h4>
-                <input id="rnd-buffer-max" value="6">
-            </div>
-            <div class="input-field-wrap">
-                <button id="rnd-gen">Random data</button>
-            </div>
-            
-        </div>
-        <div class="input-section">
-            <div class="input-field-wrap">
-                <h4>Execution times</h4>
-                <input id="execute-times" value="100">
-            </div>
-            <div class="input-field-wrap">
-                <button id="run-all">Execute</button>
-            </div>
-            <div id="progress-bar">
-                <div id="bar"></div>
-            </div>
-        </div>
-    </div>
-    
-    <div id="controls">
-        <button id="run-fifo">FIFO</button>
-        <button id="run-aging">Aging</button>
-        <button id="run-second-chance">Second chance</button>
-        <button id="run-clock">Clock</button>
-        <button id="run-clock-pro">Clock pro</button>
-        <button id="run-wsclock">WSclock</button>
-        <button id="run-car">CAR</button>
-        <button id="run-lru">LRU</button>
-        <button id="run-nfu">NFU</button>
-        <button id="run-random">Random</button>
-    </div>
-    <div class="chart-wrap">
-        <div id="chart-container">
-        </div>
-    </div>
-    <div id="page-replace-visualizer">
 
-    </div>
-    <div id="results-wrap">
-        <h3>Results</h3>
-    </div>
-    <script src="js/jquery.canvasjs.min.js"></script>
-    <script src="js/interface.js"></script>
-    <script src="js/main.js"></script>
-    
-</body>
+        <div id="controls">
+            <button id="run-fifo">FIFO</button>
+            <button id="run-aging">Aging</button>
+            <button id="run-second-chance">Second chance</button>
+            <button id="run-clock">Clock</button>
+            <button id="run-clock-pro">Clock pro</button>
+            <button id="run-wsclock">WSclock</button>
+            <button id="run-car">CAR</button>
+            <button id="run-lru">LRU</button>
+            <button id="run-nfu">NFU</button>
+            <button id="run-random">Random</button>
+        </div>
+        <div class="chart-wrap">
+            <div id="chart-container">
+            </div>
+        </div>
+        
+        <div id="page-replace-visualizer">
+            <div id="results-wrap">
+                <h3>Results</h3>
+                <div class="dataContainer"></div>
+            </div>
+        </div>
+
+        <script src="js/jquery.canvasjs.min.js"></script>
+        <script src="js/interface.js"></script>
+        <script src="js/main.js"></script>
+
+    </body>
 </html>

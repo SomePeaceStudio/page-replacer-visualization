@@ -1,4 +1,8 @@
+var $area; // global variable
+
 $(document).ready(function(){
+    $area = $("#page-replace-visualizer .dataContainer");
+        
     // Execute FIFO button
     $("#run-fifo").click(function(){
         runFifo();
@@ -21,7 +25,17 @@ $(document).ready(function(){
     //Run all n times
     $("#run-all").click(function(){
         var times = parseInt($('#execute-times').val());
+        if (times < 0) {
+            times = 0;
+        }
+        else if (times > 200) {
+            times = 200;    // should have some upper limit as well for safety :)
+        }
         setProgressBar(0);
+        $area.html('');
+        if (times === 0) {
+            $('#results-wrap').hide();
+        }
         
         for (var i=1; i <= times; i++){
             setTimeout(function(i){
@@ -137,9 +151,10 @@ function runFifo(){
         faultData['fifo'].push(results.pageFaults);
         
         // Append and display results
-        $("#results-wrap").append("<h4>FIFO : "+results.pageFaults+" page faults!</h4>");
-        $('#results-wrap').append("<h4>FIFO Time: " + (fifoEnd-fifoStart)/1000 + "s</h4>");
         $("#results-wrap").show();
+        $area.append("<h4>FIFO : "+results.pageFaults+" page faults!</h4>");
+        $area.append("<h4>FIFO Time: " + (fifoEnd-fifoStart)/1000 + "s</h4>");
+        $area.append("<hr>");
         
         // Update chart
         updateChart();
@@ -225,8 +240,7 @@ function renderBuffer(page, buffer, bs){
 // Initialize new render area 
 function renderBufferInit(bs){
     // Make new table and initialize with empty rows
-    var area = $("#page-replace-visualizer");
-    area.append("<table><tbody></tbody></table>");
+    $area.append("<table><tbody></tbody></table>");
     var table = $("#page-replace-visualizer tbody").last();
     var data = "";
     for (var i = 0; i < bs+2; i++){
