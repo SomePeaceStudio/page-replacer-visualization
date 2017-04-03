@@ -18,6 +18,7 @@ var chartData = [
                     {label: "WSclock",y:0},
                     {label: "CAR",y:0},
                     {label: "LRU",y:0},
+                    {label: "MRU",y:0},
                     {label: "NFU",y:0},
                     {label: "Random",y:0},
                     {label: "Optimal",y:0}

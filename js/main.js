@@ -27,6 +27,11 @@ $(document).ready(function(){
     $("#run-nfu").click(function(){
         runNfu();
     });
+    
+    // Execute Mru button
+    $("#run-mru").click(function(){
+        runMru();
+    });
 
 
     // Reset Everyting
@@ -75,6 +80,7 @@ $(document).ready(function(){
                 runRandom();
                 runOptimal();
                 runNfu();
+                runMru();
                 // TODO: add other algo functions
                 setProgressBar((i/times)*100);
                 if (i == times){
@@ -95,6 +101,7 @@ $(document).ready(function(){
         runRandom();
         runOptimal();
         runNfu();
+        runMru();
     });
 });
 
@@ -108,6 +115,7 @@ var faultData = {
     'car':[],
     'lru':[],
     'nfu':[],
+    'mru':[],
     'random':[],
     'optimal':[]
 };
@@ -195,14 +203,17 @@ function updateChart(){
     chartData[7].y = getAveragePageFault('lru');
     chartData[7].toolTipContent = "{label}: {y} page faults \n"+faultData['lru'].length+" executions";
     
-    chartData[8].y = getAveragePageFault('nfu');
-    chartData[8].toolTipContent = "{label}: {y} page faults \n"+faultData['nfu'].length+" executions";
+    chartData[8].y = getAveragePageFault('mru');
+    chartData[8].toolTipContent = "{label}: {y} page faults \n"+faultData['mru'].length+" executions";
     
-    chartData[9].y = getAveragePageFault('random');
-    chartData[9].toolTipContent = "{label}: {y} page faults \n"+faultData['random'].length+" executions";
+    chartData[9].y = getAveragePageFault('nfu');
+    chartData[9].toolTipContent = "{label}: {y} page faults \n"+faultData['nfu'].length+" executions";
     
-    chartData[10].y = getAveragePageFault('optimal');
+    chartData[10].y = getAveragePageFault('random');
     chartData[10].toolTipContent = "{label}: {y} page faults \n"+faultData['random'].length+" executions";
+    
+    chartData[11].y = getAveragePageFault('optimal');
+    chartData[11].toolTipContent = "{label}: {y} page faults \n"+faultData['optimal'].length+" executions";
     
     faultChart.render();
 }
@@ -366,6 +377,36 @@ function runNfu(){
         
         // Update chart
         updateChart();
+}
+
+function runMru(){
+    // Read input data
+    var data = $('#page-data-input').val().split(',').map(Number);
+    var buffSize = parseInt($('#buffer-size-input').val());
+
+    // Mesure execution time
+    var Start = new Date(); 
+    var results = mru(data,buffSize);
+    var End = new Date();
+
+    // Return if erros where found
+    if(results == null){
+        console.log("Error in Mru");
+        return;
+    }
+
+    // Add data to array
+    faultData['mru'].push(results.pageFaults);
+
+    // Append and display results
+    $("#results-wrap").show();
+    $area.append("<h4>MRU : "+results.pageFaults+" page faults!</h4>");
+    $area.append("<h4>MRU Time: " + (End-Start)/1000 + "s</h4>");
+    $area.append("<hr>");
+
+    // Update chart
+    updateChart();
+    
 }
 
 
