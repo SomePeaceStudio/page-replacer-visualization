@@ -29,6 +29,12 @@ $(document).ready(function(){
     });
 
 
+    // Reset Everyting
+    $("#clear-all").click(function(){
+        clearAll();
+    });
+
+
     // Execute Random data button
     $("#rnd-gen").click(function(){
         var length = $('#rnd-page-length').val();
@@ -200,6 +206,17 @@ function updateChart(){
     
     faultChart.render();
 }
+
+// Reset all charts / data
+function clearAll(){
+    for (obj in faultData){
+        faultData[obj]=[];
+        updateChart();
+        $(".dataContainer *").remove();
+    }
+};
+
+// ---------- Functions for running all algorithms ----------------------------- //
 
 // Run fifo algo
 function runFifo(){
