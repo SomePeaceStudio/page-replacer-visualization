@@ -865,3 +865,91 @@ function findLeastFrequentlyUsed(history){
 }
 
 //---- NFU/LFU END ---- //
+
+
+
+// ========================================================================= //
+// ------------------------------ MRU -------------------------------------- //
+// ========================================================================= //
+
+// Most reacently used
+// mru(data, buffer size)
+// return: 
+//      >=0 : { page faults:int, page hits: int } 
+//      null  : error
+function mru(data, bs){ 
+    var buffer = { 
+                    data:[], // buffer data
+                    pageFaultIdx: -1    // index where was page fault
+                                        // -1 for page hit
+                 } 
+    var pageFaults = 0;
+    var pageHits = 0;
+
+    var history = []; // page replacement history
+    var age = 0; // page place time
+    var idx; // Index for element of interest
+
+    renderBufferInit(bs);
+    for (var i = 0; i < data.length; i++){
+        // Render buffer after first cycle
+        if (i>0){
+            renderBuffer(data[i-1],buffer,bs); 
+        }
+
+        // If page is in buffer/history: page hit
+        idx = findPage(data[i], history);
+        if(idx != -1){
+            history[idx].age = age;
+            updateBuffer(buffer,history,-1);
+            pageHits++;
+            continue;
+        }
+
+        // If buffer not full: add new page
+        if(buffer.data.length<bs){
+            history.push({page:data[i],age: age})
+            updateBuffer(buffer,history,history.length-1);
+            pageFaults++;
+            age++;
+            continue;
+        }
+        
+        // If page is not in buffer: page fault
+        idx = findJungestIndex(history);
+        // If element was not found
+        if(idx == -1){
+            return null; // Error state
+        }
+        history[idx].page = data[i];
+        history[idx].age = age;
+        pageFaults++;
+        age++;
+        updateBuffer(buffer,history,idx);
+    }
+    renderBuffer(data[data.length-1],buffer,bs);
+    return {pageFaults:pageFaults,pageHits:pageHits};
+}
+
+// Finds most reacently used page
+function findJungestIndex(history){
+    var index = null;// index of oldest element
+    var lAge = null; // largest age
+
+    // Abort if there is no elements in history
+    if(history.length<1){
+        return -1;
+    }
+
+    index = 0;
+    lAge = history[0].age;
+    for (var i = 1; i < history.length; i++){
+        if(history[i].age>lAge){
+            lAge = history[i].age;
+            index = i;
+        }
+    }
+    return index;
+}
+
+//---- MRU END ---- //
