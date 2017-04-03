@@ -21,7 +21,8 @@ var chartData = [
                     {label: "MRU",y:0},
                     {label: "NFU",y:0},
                     {label: "Random",y:0},
-                    {label: "Optimal",y:0}
+                    {label: "Optimal",y:0},
+                    {label: "GClock",y:0},
                     ];
 
 // Define chart object

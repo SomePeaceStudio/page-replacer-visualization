@@ -33,6 +33,17 @@ $(document).ready(function(){
         runMru();
     });
 
+    $("#run-second-chance").click(function(){
+        runSecondChance();
+    });
+    
+    $("#run-clock").click(function(){
+        runClock();
+    });
+    
+    $("#run-gclock").click(function(){
+        runGClock();
+    });
 
     // Reset Everyting
     $("#clear-all").click(function(){
@@ -81,6 +92,9 @@ $(document).ready(function(){
                 runOptimal();
                 runNfu();
                 runMru();
+                runSecondChance();
+                runClock();
+                runGClock();
                 // TODO: add other algo functions
                 setProgressBar((i/times)*100);
                 if (i == times){
@@ -102,6 +116,9 @@ $(document).ready(function(){
         runOptimal();
         runNfu();
         runMru();
+        runSecondChance();
+        runClock();
+        runGClock();
     });
 });
 
@@ -117,7 +134,8 @@ var faultData = {
     'nfu':[],
     'mru':[],
     'random':[],
-    'optimal':[]
+    'optimal':[],
+    'gclock':[]
 };
 
 // Return random integer in range [min,max]
@@ -214,6 +232,9 @@ function updateChart(){
     
     chartData[11].y = getAveragePageFault('optimal');
     chartData[11].toolTipContent = "{label}: {y} page faults \n"+faultData['optimal'].length+" executions";
+    
+    chartData[12].y = getAveragePageFault('gclock');
+    chartData[12].toolTipContent = "{label}: {y} page faults \n"+faultData['gclock'].length+" executions";
     
     faultChart.render();
 }
@@ -402,6 +423,96 @@ function runMru(){
     $("#results-wrap").show();
     $area.append("<h4>MRU : "+results.pageFaults+" page faults!</h4>");
     $area.append("<h4>MRU Time: " + (End-Start)/1000 + "s</h4>");
+    $area.append("<hr>");
+
+    // Update chart
+    updateChart();
+    
+}
+
+function runSecondChance(){
+    // Read input data
+    var data = $('#page-data-input').val().split(',').map(Number);
+    var buffSize = parseInt($('#buffer-size-input').val());
+
+    // Mesure execution time
+    var Start = new Date(); 
+    var results = secondChance(data,buffSize);
+    var End = new Date();
+
+    // Return if erros where found
+    if(results == null){
+        console.log("Error in Second chance");
+        return;
+    }
+
+    // Add data to array
+    faultData['secondChance'].push(results.pageFaults);
+
+    // Append and display results
+    $("#results-wrap").show();
+    $area.append("<h4>Second chance : "+results.pageFaults+" page faults!</h4>");
+    $area.append("<h4>Second chance Time: " + (End-Start)/1000 + "s</h4>");
+    $area.append("<hr>");
+
+    // Update chart
+    updateChart();
+    
+}
+
+function runClock(){
+    // Read input data
+    var data = $('#page-data-input').val().split(',').map(Number);
+    var buffSize = parseInt($('#buffer-size-input').val());
+
+    // Mesure execution time
+    var Start = new Date(); 
+    var results = clock(data,buffSize);
+    var End = new Date();
+
+    // Return if erros where found
+    if(results == null){
+        console.log("Error in Clock");
+        return;
+    }
+
+    // Add data to array
+    faultData['clock'].push(results.pageFaults);
+
+    // Append and display results
+    $("#results-wrap").show();
+    $area.append("<h4>Clock: "+results.pageFaults+" page faults!</h4>");
+    $area.append("<h4>Clock Time: " + (End-Start)/1000 + "s</h4>");
+    $area.append("<hr>");
+
+    // Update chart
+    updateChart();
+    
+}
+
+function runGClock(){
+    // Read input data
+    var data = $('#page-data-input').val().split(',').map(Number);
+    var buffSize = parseInt($('#buffer-size-input').val());
+
+    // Mesure execution time
+    var Start = new Date(); 
+    var results = gClock(data,buffSize);
+    var End = new Date();
+
+    // Return if erros where found
+    if(results == null){
+        console.log("Error in GClock");
+        return;
+    }
+
+    // Add data to array
+    faultData['gclock'].push(results.pageFaults);
+
+    // Append and display results
+    $("#results-wrap").show();
+    $area.append("<h4>GClock: "+results.pageFaults+" page faults!</h4>");
+    $area.append("<h4>GClock Time: " + (End-Start)/1000 + "s</h4>");
     $area.append("<hr>");
 
     // Update chart
@@ -994,3 +1105,322 @@ function findJungestIndex(history){
 }
 
 //---- MRU END ---- //
+
+
+// ========================================================================= //
+// ------------------------------ Second Chance ---------------------------- //
+// ========================================================================= //
+
+// Second Chance
+// secondChance(data, buffer size)
+// return: 
+//      >=0 : { page faults:int, page hits: int } 
+//      null  : error
+function secondChance(data, bs){ 
+    var buffer = { 
+                    data:[], // buffer data
+                    pageFaultIdx: -1    // index where was page fault
+                                        // -1 for page hit
+                 } 
+    var pageFaults = 0;
+    var pageHits = 0;
+
+    var history = []; // page replacement history
+    var age = 0; // page place time
+    var idx; // Index for element of interest
+
+    renderBufferInit(bs);
+    for (var i = 0; i < data.length; i++){
+        // Render buffer after first cycle
+        if (i>0){
+            renderBuffer(data[i-1],buffer,bs); 
+        }
+
+        // If page is in buffer/history: page hit
+        idx = findPage(data[i], history);
+        if(idx != -1){
+            updateBuffer(buffer,history,-1);
+            history[idx].referenced = 1;
+            pageHits++;
+            continue;
+        }
+
+        // If buffer not full: add new page
+        if(buffer.data.length<bs){
+            history.push({page:data[i],age: age})
+            updateBuffer(buffer,history,history.length-1);
+            pageFaults++;
+            age++;
+            continue;
+        }
+        
+        // If page is not in buffer: page fault
+        idx = findSecondChanceIndex(history,age);
+        // If element was not found
+        if(idx == -1){
+            return null; // Error state
+        }
+        history[idx].page = data[i];
+        history[idx].age = age;
+        history[idx].referenced = 0;
+        pageFaults++;
+        age++;
+        updateBuffer(buffer,history,idx);
+    }
+    renderBuffer(data[data.length-1],buffer,bs);
+    return {pageFaults:pageFaults,pageHits:pageHits};
+}
+
+
+// Most reacently used
+// mru(data, buffer size)
+// return: 
+//      >=0 : { page faults:int, page hits: int } 
+//      null  : error
+//      
+// Fing oldest indes in history object
+function findSecondChanceIndex(history,currentAge){
+    var index = null;// index of oldest element
+    var sAge = null; // smallest age
+
+    // Abort if there is no elements in history
+    if(history.length<1){
+        return -1;
+    }
+
+    index = 0;
+    sAge = history[0].age;
+    for (var i = 1; i < history.length; i++){
+        if(history[i].age<sAge){
+            sAge = history[i].age;
+            index = i;
+        }
+    }
+    
+    if (history[index].referenced == 1)
+    {
+        history[index].referenced = 0;
+        history[index].age = currentAge;
+        
+        index = findSecondChanceIndex(history,currentAge);
+    }
+    
+    return index;
+}
+
+//---- Second Chance END ---- //
+
+// ========================================================================= //
+// ------------------------------ Clock ---------------------------- //
+// ========================================================================= //
+
+// Clock
+// clock(data, buffer size)
+// return: 
+//      >=0 : { page faults:int, page hits: int } 
+//      null  : error
+function clock(data, bs){ 
+    var buffer = { 
+                    data:[], // buffer data
+                    pageFaultIdx: -1    // index where was page fault
+                                        // -1 for page hit
+                 } 
+    var pageFaults = 0;
+    var pageHits = 0;
+    var hand = 0;
+
+    var history = []; // page replacement history
+    var idx; // Index for element of interest
+
+    renderBufferInit(bs);
+    for (var i = 0; i < data.length; i++){
+        // Render buffer after first cycle
+        if (i>0){
+            renderBuffer(data[i-1],buffer,bs); 
+        }
+
+        // If page is in buffer/history: page hit
+        idx = findPage(data[i], history);
+        if(idx != -1){
+            updateBuffer(buffer,history,-1);
+            history[idx].referenced = 1;
+            hand++;
+            hand = hand % (bs);
+            pageHits++;
+            continue;
+        }
+
+        // If buffer not full: add new page
+        if(buffer.data.length<bs){
+            history.push({page:data[i]})
+            var currElem = history.length - 1;
+            history[currElem].referenced = 0;
+            updateBuffer(buffer,history,history.length-1);
+            pageFaults++;
+            continue;
+        }
+        
+        // If page is not in buffer: page fault
+        idx = findClockIndex(history,bs,hand);
+        // If element was not found
+        if(idx == -1){
+            return null; // Error state
+        }
+        history[idx].page = data[i];
+        history[idx].referenced = 0;
+        pageFaults++;
+        updateBuffer(buffer,history,idx);
+    }
+    renderBuffer(data[data.length-1],buffer,bs);
+    return {pageFaults:pageFaults,pageHits:pageHits};
+}
+
+
+// Most reacently used
+// mru(data, buffer size)
+// return: 
+//      >=0 : { page faults:int, page hits: int } 
+//      null  : error
+//      
+// Fing oldest indes in history object
+function findClockIndex(history,bufferSize,handPos){
+    var index = null;// index of oldest element
+    var sAge = null; // smallest age
+
+    // Abort if there is no elements in history
+    if(history.length<1){
+        return -1;
+    }
+
+    index = 0;
+    
+    while(true)
+    {
+        if (history[handPos].referenced == 0)
+        {
+            //If hand is of not referenced, repleace it
+            index = handPos;
+            break;
+        }
+        else 
+        {
+            //If hand is on referenced
+            //Remove referenced
+            history[handPos].referenced = 0;
+            //Get next postion
+            handPos++;
+            handPos = handPos % (bufferSize);
+        }
+    }
+    
+    return index;
+}
+
+//---- Clock END ---- //
+
+// ========================================================================= //
+// ------------------------------ GClock ---------------------------- //
+// ========================================================================= //
+
+// GClock
+// gClock(data, buffer size)
+// return: 
+//      >=0 : { page faults:int, page hits: int } 
+//      null  : error
+function gClock(data, bs){ 
+    var buffer = { 
+                    data:[], // buffer data
+                    pageFaultIdx: -1    // index where was page fault
+                                        // -1 for page hit
+                 } 
+    var pageFaults = 0;
+    var pageHits = 0;
+    var hand = 0;
+
+    var history = []; // page replacement history
+    var idx; // Index for element of interest
+
+    renderBufferInit(bs);
+    for (var i = 0; i < data.length; i++){
+        // Render buffer after first cycle
+        if (i>0){
+            renderBuffer(data[i-1],buffer,bs); 
+        }
+
+        // If page is in buffer/history: page hit
+        idx = findPage(data[i], history);
+        if(idx != -1){
+            updateBuffer(buffer,history,-1);
+            history[idx].counter++;
+            hand++;
+            hand = hand % (bs);
+            pageHits++;
+            continue;
+        }
+
+        // If buffer not full: add new page
+        if(buffer.data.length<bs){
+            history.push({page:data[i]})
+            var currElem = history.length - 1;
+            history[currElem].counter = 0;
+            updateBuffer(buffer,history,history.length-1);
+            pageFaults++;
+            continue;
+        }
+        
+        // If page is not in buffer: page fault
+        idx = findGClockIndex(history,bs,hand);
+        // If element was not found
+        if(idx == -1){
+            return null; // Error state
+        }
+        history[idx].page = data[i];
+        history[idx].referenced = 0;
+        pageFaults++;
+        updateBuffer(buffer,history,idx);
+    }
+    renderBuffer(data[data.length-1],buffer,bs);
+    return {pageFaults:pageFaults,pageHits:pageHits};
+}
+
+
+// Most reacently used
+// mru(data, buffer size)
+// return: 
+//      >=0 : { page faults:int, page hits: int } 
+//      null  : error
+//      
+// Fing oldest indes in history object
+function findGClockIndex(history,bufferSize,handPos){
+    var index = null;// index of oldest element
+    //
+    // Abort if there is no elements in history
+    if(history.length<1){
+        return -1;
+    }
+
+    index = 0;
+    
+    while(true)
+    {
+        if (history[handPos].counter == 0)
+        {
+            //If hand is of not referenced, repleace it
+            index = handPos;
+            break;
+        }
+        else 
+        {
+            //If hand is on referenced
+            //Remove referenced
+            history[handPos].counter--;
+            //Get next postion
+            handPos++;
+            handPos = handPos % (bufferSize);
+        }
+    }
+    
+    return index;
+}
+
+//---- Clock END ---- //
