@@ -23,6 +23,12 @@ $(document).ready(function(){
         runOptimal();
     });
 
+    // Execute Nfu button
+    $("#run-nfu").click(function(){
+        runNfu();
+    });
+
+
     // Execute Random data button
     $("#rnd-gen").click(function(){
         var length = $('#rnd-page-length').val();
@@ -62,6 +68,7 @@ $(document).ready(function(){
                 runLru();
                 runRandom();
                 runOptimal();
+                runNfu();
                 // TODO: add other algo functions
                 setProgressBar((i/times)*100);
                 if (i == times){
@@ -81,6 +88,7 @@ $(document).ready(function(){
         runLru();
         runRandom();
         runOptimal();
+        runNfu();
     });
 });
 
@@ -313,6 +321,37 @@ function runOptimal(){
         updateChart();
 }
 
+// Run Nfu algo
+function runNfu(){
+    // Read input data
+        var data = $('#page-data-input').val().split(',').map(Number);
+        var buffSize = parseInt($('#buffer-size-input').val());
+        
+        // Mesure execution time
+        var Start = new Date(); 
+        var results = nfu(data,buffSize);
+        var End = new Date();
+        
+        // Return if erros where found
+        if(results == null){
+            console.log("Error in Nfu");
+            return;
+        }
+
+        // Add data to array
+        faultData['nfu'].push(results.pageFaults);
+        
+        // Append and display results
+        $("#results-wrap").show();
+        $area.append("<h4>NFU : "+results.pageFaults+" page faults!</h4>");
+        $area.append("<h4>NFU Time: " + (End-Start)/1000 + "s</h4>");
+        $area.append("<hr>");
+        
+        // Update chart
+        updateChart();
+}
+
+
 // ---------- Functions used by all algorithms ----------------------------- //
 
 // Render buffer in current state
@@ -418,7 +457,7 @@ function findOldestIndex(history){
 // ========================================================================= //
 
 // First in first out
-// int fifo(data, buffer size)
+// fifo(data, buffer size)
 // return: 
 //      >=0 : { page faults:int, page hits: int } 
 //      null  : error
@@ -483,7 +522,7 @@ function fifo(data, bs){
 // ========================================================================= //
 
 // Least reacently used
-// int lru(data, buffer size)
+// lru(data, buffer size)
 // return: 
 //      >=0 : { page faults:int, page hits: int } 
 //      null  : error
@@ -546,7 +585,7 @@ function lru(data, bs){
 // ========================================================================= //
 
 // Random algorithm
-// int random(data, buffer size)
+// random(data, buffer size)
 // return: 
 //      >=0 : { page faults:int, page hits: int } 
 //      null  : error
@@ -588,7 +627,7 @@ function random(data, bs){
         }
         
         // If page is not in buffer: page fault
-        idx = getRandomInteger(0,bs-1);//findOldestIndex(history);
+        idx = getRandomInteger(0,bs-1);
         // If element was not found
         if(idx == -1){
             return null; // Error state
@@ -714,5 +753,98 @@ function optimal(data, bs){
 // ========================================================================= //
 // -------------------------- NFU/LFU -------------------------------------- //
 // ========================================================================= //
+
+// Not frequently used
+// nfu(data, buffer size)
+// return: 
+//      >=0 : { page faults:int, page hits: int } 
+//      null  : error
+function nfu(data, bs){ 
+    var buffer = { 
+                    data:[], // buffer data
+                    pageFaultIdx: -1    // index where was page fault
+                                        // -1 for page hit
+                 } 
+    var pageFaults = 0;
+    var pageHits = 0;
+
+    var history = []; // page replacement history
+    var age = 0; // page place time
+    var idx; // Index for element of interest
+
+    renderBufferInit(bs);
+    for (var i = 0; i < data.length; i++){
+        // Render buffer after first cycle
+        if (i>0){
+            renderBuffer(data[i-1],buffer,bs); 
+        }
+
+        // If page is in buffer/history: page hit
+        idx = findPage(data[i], history);
+        if(idx != -1){
+            history[idx].count++;
+            updateBuffer(buffer,history,-1);
+            pageHits++;
+            continue;
+        }
+
+        // If buffer not full: add new page
+        if(buffer.data.length<bs){
+            history.push({page:data[i],age: age, count: 1})
+            updateBuffer(buffer,history,history.length-1);
+            pageFaults++;
+            age++;
+            continue;
+        }
+        
+        // If page is not in buffer: page fault
+        idx = findLeastFrequentlyUsed(history);
+        // If element was not found
+        if(idx == -1){
+            return null; // Error state
+        }
+        history[idx].page = data[i];
+        history[idx].age = age;
+        pageFaults++;
+        age++;
+        updateBuffer(buffer,history,idx);
+    }
+    renderBuffer(data[data.length-1],buffer,bs);
+    return {pageFaults:pageFaults,pageHits:pageHits};
+}
+
+// Finds least frequently usef page
+// if there are two then use fifo to break the tie
+// return index for least frequently used element
+function findLeastFrequentlyUsed(history){
+    var index = null;// index for element of interest
+    var sCount = null; // smallest count
+    var sAge = null; // smallest age
+
+    // Abort if there is no elements in history
+    if(history.length<1){
+        return -1;
+    }
+
+    // Find smallest count
+    index = 0;
+    sCount = history[0].count;
+    for (var i = 1; i < history.length; i++){
+        if(history[i].count<sCount){
+            sCount = history[i].count;
+            index = i;
+        }
+    }
+    // Find smallest age
+    sAge = history[index].age;
+    for (var i = 0; i < history.length; i++){
+        if(history[i].count == sCount && history[i].age<sAge){
+            sAge = history[i].age;
+            index = i;
+        }
+    }
+
+    return index;
+}
 
 //---- NFU/LFU END ---- //
