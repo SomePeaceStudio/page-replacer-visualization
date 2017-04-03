@@ -32,8 +32,8 @@ $(document).ready(function(){
         genRandomBufferSize(bufferMin,bufferMax);
     });
     
-    //Run all n times
-    $("#run-all").click(function(){
+    //Test all n times
+    $("#test-all").click(function(){
         setTimeout(function(){
             showSpinner();
         },0)
@@ -73,6 +73,14 @@ $(document).ready(function(){
         }
         },10)
         
+    });
+
+    // Run all with input data provided
+    $("#run-all").click(function(){
+        runFifo();
+        runLru();
+        runRandom();
+        runOptimal();
     });
 });
 

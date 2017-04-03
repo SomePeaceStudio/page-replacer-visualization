@@ -37,22 +37,22 @@
                     <h4>Buffer size</h4>
                     <input id="buffer-size-input" value="3" type="number">
                 </div>
-                <div class="input-field-wrap">
-                    <button id="rnd-gen">Random data</button>
-                </div>
             </div>
             <div class="input-section">
                 <div class="input-field-wrap">
                     <h4>Page length</h4>
-                    <input id="rnd-page-length" value="16">
+                    <input id="rnd-page-length" value="16" type="number">
                 </div>
                 <div class="input-field-wrap">
                     <h4>Buffer size min</h4>
-                    <input id="rnd-buffer-min" value="3">
+                    <input id="rnd-buffer-min" value="3" type="number">
                 </div>
                 <div class="input-field-wrap">
                     <h4>Buffer size max</h4>
-                    <input id="rnd-buffer-max" value="6">
+                    <input id="rnd-buffer-max" value="6" type="number">
+                </div>
+                <div class="input-field-wrap">
+                    <button id="rnd-gen">Generate random data</button>
                 </div>
             </div>
             <div class="input-section">
@@ -61,7 +61,7 @@
                     <input id="execute-times" value="10">
                 </div>
                 <div class="input-field-wrap">
-                    <button id="run-all">Execute all algorithms</button>
+                    <button id="test-all">Test all algorithms</button>
                     <div class="sk-cube-grid" id="spinner">
                         <div class="sk-cube sk-cube1"></div>
                         <div class="sk-cube sk-cube2"></div>
@@ -84,7 +84,7 @@
                 </div>
             </div>
         </div>
-
+        <hr>
         <div id="controls">
             <button id="run-fifo">FIFO</button>
             <button id="run-aging">Aging</button>
@@ -97,6 +97,7 @@
             <button id="run-nfu">NFU</button>
             <button id="run-random">Random</button>
             <button id="run-optimal">Optimal</button>
+            <button id="run-all">Execute all</button>
         </div>
         <div class="chart-wrap">
             <div id="chart-container">
