@@ -5,38 +5,50 @@ $(document).ready(function(){
         
     // Execute FIFO button
     $("#run-fifo").click(function(){
-        runFifo();
+        if (validatePageData()){
+            runFifo();
+        }
     });
     
     // Execute LRU button
     $("#run-lru").click(function(){
-        runLru();
+        if (validatePageData()){
+            runLru();
+        }
     });
     
     // Execute Random button
     $("#run-random").click(function(){
-        runRandom();
+        if (validatePageData()){
+            runRandom();
+        }
     });
     
     // Execute Optimal button
     $("#run-optimal").click(function(){
-        runOptimal();
+        if (validatePageData()){
+            runOptimal();
+        }
     });
 
     // Execute Nfu button
     $("#run-nfu").click(function(){
-        runNfu();
+        if (validatePageData()){
+            runNfu();
+        }
     });
     
     // Execute Mru button
     $("#run-mru").click(function(){
-        runMru();
+        if (validatePageData()){
+            runMru();
+        }
     });
 
 
     // Reset Everyting
     $("#clear-all").click(function(){
-        clearAll();
+            clearAll();
     });
 
 
@@ -51,47 +63,50 @@ $(document).ready(function(){
     
     //Test all n times
     $("#test-all").click(function(){
-        setTimeout(function(){
-            showSpinner();
-        },0)
-        var times = parseInt($('#execute-times').val());
-        if (times < 0) {
-            times = 0;
-        }
-        else if (times > 200) {
-            times = 200;    // should have some upper limit as well for safety :)
-        }
-        setProgressBar(0);
-        $area.html('');
-        if (times === 0) {
-            $('#results-wrap').hide();
-        }
-        setTimeout(function(){
-            for (var i=1; i <= times; i++){
-            setTimeout(function(i){
-                var length = $('#rnd-page-length').val();
-                var bufferMin = $('#rnd-buffer-min').val();
-                var bufferMax = $('#rnd-buffer-max').val();
-                genRandomData(length);
-                genRandomBufferSize(bufferMin,bufferMax);
+        if (validatePageData()){
+            setTimeout(function(){
+                showSpinner();
+            },0)
+            var times = parseInt($('#execute-times').val());
+            if (times < 0) {
+                times = 0;
+            }
+            else if (times > 200) {
+                times = 200;    // should have some upper limit as well for safety :)
+            }
+            setProgressBar(0);
+            $area.html('');
+            if (times === 0) {
+                $('#results-wrap').hide();
+            }
+            setTimeout(function(){
+                for (var i=1; i <= times; i++){
+                setTimeout(function(i){
+                    var length = $('#rnd-page-length').val();
+                    var bufferMin = $('#rnd-buffer-min').val();
+                    var bufferMax = $('#rnd-buffer-max').val();
+                    genRandomData(length);
+                    genRandomBufferSize(bufferMin,bufferMax);
 
-                runAllAlogos();
-                
-                setProgressBar((i/times)*100);
-                if (i == times){
-                    setTimeout(function(){
-                        hideSpinner();
-                    },0);
-                }
-            },0,i);
+                    runAllAlgos();
+
+                    setProgressBar((i/times)*100);
+                    if (i == times){
+                        setTimeout(function(){
+                            hideSpinner();
+                        },0);
+                    }
+                },0,i);
+            }
+            },10)
         }
-        },10)
-        
     });
 
     // Run all with input data provided
     $("#run-all").click(function(){
-        runAllAlogos();
+        if (validatePageData()){
+            runAllAlgos();
+        }
     });
 });
 
@@ -109,6 +124,20 @@ var faultData = {
     'random':[],
     'optimal':[]
 };
+
+// Check if page-data-input is in valid format
+function validatePageData(){
+    var valid = /^((([0-9]+),)+[0-9]+)$/.test($('#page-data-input').val());
+    if (!valid){
+        console.debug('invalid')
+        spawnPageValidationError();
+    }
+    else{
+        console.debug('valid')
+        despawnPageValidationError();
+    }
+    return valid;
+}
 
 // Execute all made algorithms
 function runAllAlgos(){
@@ -233,31 +262,31 @@ function clearAll(){
 // Run fifo algo
 function runFifo(){
     // Read input data
-        var data = $('#page-data-input').val().split(',').map(Number);
-        var buffSize = parseInt($('#buffer-size-input').val());
-        
-        // Mesure execution time
-        var fifoStart = new Date(); 
-        var results = fifo(data,buffSize);
-        var fifoEnd = new Date();
-        
-        // Return if erros where found
-        if(results == null){
-            console.log("Error in FIFO");
-            return;
-        }
+    var data = $('#page-data-input').val().split(',').map(Number);
+    var buffSize = parseInt($('#buffer-size-input').val());
 
-        // Add data to array
-        faultData['fifo'].push(results.pageFaults);
-        
-        // Append and display results
-        $("#results-wrap").show();
-        $area.append("<h4>FIFO : "+results.pageFaults+" page faults!</h4>");
-        $area.append("<h4>FIFO Time: " + (fifoEnd-fifoStart)/1000 + "s</h4>");
-        $area.append("<hr>");
-        
-        // Update chart
-        updateChart();
+    // Mesure execution time
+    var fifoStart = new Date(); 
+    var results = fifo(data,buffSize);
+    var fifoEnd = new Date();
+
+    // Return if erros where found
+    if(results == null){
+        console.log("Error in FIFO");
+        return;
+    }
+
+    // Add data to array
+    faultData['fifo'].push(results.pageFaults);
+
+    // Append and display results
+    $("#results-wrap").show();
+    $area.append("<h4>FIFO : "+results.pageFaults+" page faults!</h4>");
+    $area.append("<h4>FIFO Time: " + (fifoEnd-fifoStart)/1000 + "s</h4>");
+    $area.append("<hr>");
+
+    // Update chart
+    updateChart();
 }
 
 // Run lru algo

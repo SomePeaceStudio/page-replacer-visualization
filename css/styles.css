@@ -17,6 +17,29 @@ body{
     transition: all ease-in 0.3s;
 }
 
+.error-wrap{
+    height: 20px;
+}
+#invalid-page-data-error{
+    height: 20px;
+    background: white;
+    margin: auto;
+    display: none;
+}
+
+#invalid-page-data-error img{
+    width: 20px;
+    margin: 0px;
+    float: left;
+}
+
+#invalid-page-data-error p{
+    color: red;
+    font-size: 18px;
+    line-height: 20px;
+    margin: 0;
+}
+
 .authors-wrap.opened {
     height: 115px;
 }

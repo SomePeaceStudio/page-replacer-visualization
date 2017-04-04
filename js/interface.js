@@ -50,3 +50,14 @@ function setProgressBar(percent){
     $('#bar').css('width',percent+'%');
 }
 
+// Error notification for invalid page data format
+function spawnPageValidationError(){
+    $('#invalid-page-data-error').show();
+//    hideTimer = setTimeout(function(){
+//        $('#invalid-page-data-error').hide();
+//    },5000);
+}
+
+function despawnPageValidationError(){
+    $('#invalid-page-data-error').hide();
+}
