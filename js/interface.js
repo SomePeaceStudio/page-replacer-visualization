@@ -8,21 +8,24 @@ $(document).ready(function(){
     faultChart.render();
 });
 
+// Chart column colors
+var colorList = ['#d43515', '#d47415', '#d49b2a', '#d4d420', '#94d415', '#2ad447', '#20d498', '#20d4d4', '#20b6d4', '#1594d4', '#1574d4', '#203ed4']
+
 // Define axis data
 var chartData = [
-                    {label: "FIFO", y:0},
-                    {label: "Aging",y:0},
-                    {label: "Second chance",y:0},
-                    {label: "Clock",y:0},
-                    {label: "Clock pro",y:0},
-                    {label: "WSclock",y:0},
-                    {label: "CAR",y:0},
-                    {label: "LRU",y:0},
-                    {label: "MRU",y:0},
-                    {label: "NFU",y:0},
-                    {label: "Random",y:0},
-                    {label: "Optimal",y:0},
-                    {label: "GClock",y:0},
+                    {label: "FIFO", y:0,color:colorList[0]},
+                    {label: "Aging",y:0,color:colorList[1]},
+                    {label: "Second chance",y:0,color:colorList[2]},
+                    {label: "Clock",y:0,color:colorList[3]},
+                    {label: "Clock pro",y:0,color:colorList[4]},
+                    {label: "WSclock",y:0,color:colorList[5]},
+                    {label: "CAR",y:0,color:colorList[6]},
+                    {label: "LRU",y:0,color:colorList[7]},
+                    {label: "MRU",y:0,color:colorList[8]},
+                    {label: "NFU",y:0,color:colorList[9]},
+                    {label: "Random",y:0,color:colorList[10]},
+                    {label: "Optimal",y:0,color:colorList[11]},
+                    {label: "GClock",y:0,color:colorList[12]},
                     ];
 
 // Define chart object

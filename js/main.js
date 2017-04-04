@@ -260,46 +260,76 @@ function hideSpinner(){
 
 // Update page faults chart
 function updateChart(){
-    chartData[0].y = getAveragePageFault('fifo');
-    chartData[0].toolTipContent = "{label}: {y} page faults \n"+faultData['fifo'].length+" executions";
+    // Update data
+    chartData[getLabelIndex('FIFO')].y = getAveragePageFault('fifo');
+    chartData[getLabelIndex('FIFO')].toolTipContent = "{label}: {y} page faults \n"+faultData['fifo'].length+" executions";
     
-    chartData[1].y = getAveragePageFault('aging');
-    chartData[1].toolTipContent = "{label}: {y} page faults \n"+faultData['aging'].length+" executions";
+    chartData[getLabelIndex('Aging')].y = getAveragePageFault('aging');
+    chartData[getLabelIndex('Aging')].toolTipContent = "{label}: {y} page faults \n"+faultData['aging'].length+" executions";
     
-    chartData[2].y = getAveragePageFault('secondChance');
-    chartData[2].toolTipContent = "{label}: {y} page faults \n"+faultData['secondChance'].length+" executions";
+    chartData[getLabelIndex('Second chance')].y = getAveragePageFault('secondChance');
+    chartData[getLabelIndex('Second chance')].toolTipContent = "{label}: {y} page faults \n"+faultData['secondChance'].length+" executions";
     
-    chartData[3].y = getAveragePageFault('clock');
-    chartData[3].toolTipContent = "{label}: {y} page faults \n"+faultData['clock'].length+" executions";
+    chartData[getLabelIndex('Clock')].y = getAveragePageFault('clock');
+    chartData[getLabelIndex('Clock')].toolTipContent = "{label}: {y} page faults \n"+faultData['clock'].length+" executions";
     
-    chartData[4].y = getAveragePageFault('clockPro');
-    chartData[4].toolTipContent = "{label}: {y} page faults \n"+faultData['clockPro'].length+" executions";
+    chartData[getLabelIndex('Clock pro')].y = getAveragePageFault('clockPro');
+    chartData[getLabelIndex('Clock pro')].toolTipContent = "{label}: {y} page faults \n"+faultData['clockPro'].length+" executions";
     
-    chartData[5].y = getAveragePageFault('wsclock');
-    chartData[5].toolTipContent = "{label}: {y} page faults \n"+faultData['wsclock'].length+" executions";
+    chartData[getLabelIndex('WSclock')].y = getAveragePageFault('wsclock');
+    chartData[getLabelIndex('WSclock')].toolTipContent = "{label}: {y} page faults \n"+faultData['wsclock'].length+" executions";
     
-    chartData[6].y = getAveragePageFault('car');
-    chartData[6].toolTipContent = "{label}: {y} page faults \n"+faultData['car'].length+" executions";
+    chartData[getLabelIndex('CAR')].y = getAveragePageFault('car');
+    chartData[getLabelIndex('CAR')].toolTipContent = "{label}: {y} page faults \n"+faultData['car'].length+" executions";
     
-    chartData[7].y = getAveragePageFault('lru');
-    chartData[7].toolTipContent = "{label}: {y} page faults \n"+faultData['lru'].length+" executions";
+    chartData[getLabelIndex('LRU')].y = getAveragePageFault('lru');
+    chartData[getLabelIndex('LRU')].toolTipContent = "{label}: {y} page faults \n"+faultData['lru'].length+" executions";
     
-    chartData[8].y = getAveragePageFault('mru');
-    chartData[8].toolTipContent = "{label}: {y} page faults \n"+faultData['mru'].length+" executions";
+    chartData[getLabelIndex('MRU')].y = getAveragePageFault('mru');
+    chartData[getLabelIndex('MRU')].toolTipContent = "{label}: {y} page faults \n"+faultData['mru'].length+" executions";
     
-    chartData[9].y = getAveragePageFault('nfu');
-    chartData[9].toolTipContent = "{label}: {y} page faults \n"+faultData['nfu'].length+" executions";
+    chartData[getLabelIndex('NFU')].y = getAveragePageFault('nfu');
+    chartData[getLabelIndex('NFU')].toolTipContent = "{label}: {y} page faults \n"+faultData['nfu'].length+" executions";
     
-    chartData[10].y = getAveragePageFault('random');
-    chartData[10].toolTipContent = "{label}: {y} page faults \n"+faultData['random'].length+" executions";
+    chartData[getLabelIndex('Random')].y = getAveragePageFault('random');
+    chartData[getLabelIndex('Random')].toolTipContent = "{label}: {y} page faults \n"+faultData['random'].length+" executions";
     
-    chartData[11].y = getAveragePageFault('optimal');
-    chartData[11].toolTipContent = "{label}: {y} page faults \n"+faultData['optimal'].length+" executions";
+    chartData[getLabelIndex('Optimal')].y = getAveragePageFault('optimal');
+    chartData[getLabelIndex('Optimal')].toolTipContent = "{label}: {y} page faults \n"+faultData['optimal'].length+" executions";
     
-    chartData[12].y = getAveragePageFault('gclock');
-    chartData[12].toolTipContent = "{label}: {y} page faults \n"+faultData['gclock'].length+" executions";
+    chartData[getLabelIndex('GClock')].y = getAveragePageFault('gclock');
+    chartData[getLabelIndex('GClock')].toolTipContent = "{label}: {y} page faults \n"+faultData['gclock'].length+" executions";
+    
+    // Order data
+    chartData.sort(compareChartColumns);
+    for (i in chartData){
+        chartData[i].x = parseInt(i);
+    }
     
     faultChart.render();
+}
+
+// Get chart index from chart label
+function getLabelIndex(label){
+    for (i in chartData){
+        if (chartData[i].label == label){
+            return i;
+        }
+    }
+    return -1;
+}
+
+// Helper comparison function for sorting chart columns
+function compareChartColumns(first,second){
+    if (first.y < second.y){
+        return -1;
+    }
+    if (first.y == second.y){
+        return 0;
+    }
+    if (first.y > second.y){
+        return 1;
+    }
 }
 
 // Reset all charts / data
