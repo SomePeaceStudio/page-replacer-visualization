@@ -45,6 +45,10 @@ $(document).ready(function(){
         runGClock();
     });
 
+    $("#run-aging").click(function(){
+        runAging();
+    });
+
     // Reset Everyting
     $("#clear-all").click(function(){
         clearAll();
@@ -95,6 +99,7 @@ $(document).ready(function(){
                 runSecondChance();
                 runClock();
                 runGClock();
+                runAging();
                 // TODO: add other algo functions
                 setProgressBar((i/times)*100);
                 if (i == times){
@@ -119,6 +124,7 @@ $(document).ready(function(){
         runSecondChance();
         runClock();
         runGClock();
+        runAging();
     });
 });
 
@@ -152,7 +158,7 @@ function genRandomData(length,min,max){
         min = 1;
     }
     if (max === undefined){
-        max = 20;
+        max = 9;
     }
     var pageData = '';
     for (var i=1; i <= length; i++){
@@ -513,6 +519,36 @@ function runGClock(){
     $("#results-wrap").show();
     $area.append("<h4>GClock: "+results.pageFaults+" page faults!</h4>");
     $area.append("<h4>GClock Time: " + (End-Start)/1000 + "s</h4>");
+    $area.append("<hr>");
+
+    // Update chart
+    updateChart();
+    
+}
+
+function runAging(){
+    // Read input data
+    var data = $('#page-data-input').val().split(',').map(Number);
+    var buffSize = parseInt($('#buffer-size-input').val());
+
+    // Mesure execution time
+    var Start = new Date(); 
+    var results = aging(data,buffSize);
+    var End = new Date();
+
+    // Return if erros where found
+    if(results == null){
+        console.log("Error in Aging");
+        return;
+    }
+
+    // Add data to array
+    faultData['aging'].push(results.pageFaults);
+
+    // Append and display results
+    $("#results-wrap").show();
+    $area.append("<h4>Aging: "+results.pageFaults+" page faults!</h4>");
+    $area.append("<h4>Aging Time: " + (End-Start)/1000 + "s</h4>");
     $area.append("<hr>");
 
     // Update chart
@@ -1424,3 +1460,145 @@ function findGClockIndex(history,bufferSize,handPos){
 }
 
 //---- Clock END ---- //
+
+
+// ========================================================================= //
+// -------------------------- Aging ---------------------------------------- //
+// ========================================================================= //
+
+// Aging
+// aging(data, buffer size)
+// return: 
+//      >=0 : { page faults:int, page hits: int } 
+//      null  : error
+function aging(data, bs){ 
+    var buffer = { 
+                    data:[], // buffer data
+                    pageFaultIdx: -1    // index where was page fault
+                                        // -1 for page hit
+                 } 
+    var pageFaults = 0;
+    var pageHits = 0;
+
+    var history = []; // page replacement history
+    var idx; // Index for element of interest
+
+    renderBufferInit(bs);
+    for (var i = 0; i < data.length; i++){
+        // Render buffer after first cycle
+        if (i>0){
+            renderBuffer(data[i-1],buffer,bs); 
+        }
+
+        // If page is in buffer/history: page hit
+        idx = findAgingPage(data[i], history);
+        if(idx != -1){
+            history[idx].count++;           
+            updateBuffer(buffer,history,-1);
+            pageHits++;
+            continue;
+        }
+
+        // If buffer not full: add new page
+        if(buffer.data.length<bs){
+            history.push({page:data[i],age: 128, count: 1})
+            updateBuffer(buffer,history,history.length-1);
+            pageFaults++;
+            continue;
+        }
+        
+        // If page is not in buffer: page fault
+        idx = findAgingVictim(history);
+        // If element was not found
+        if(idx == -1){
+            return null; // Error state
+        }
+        history[idx].page = data[i];
+        history[idx].age = 128;
+        history[idx].count = 1; 
+        pageFaults++;
+        updateBuffer(buffer,history,idx);
+    }
+    renderBuffer(data[data.length-1],buffer,bs);
+    return {pageFaults:pageFaults,pageHits:pageHits};
+}
+
+// Find page in history using page number
+function findAgingPage(page, history){
+    var index = -1;
+    
+    for (var i = 0; i < history.length; i++){
+        if(history[i].page==page){
+            index = i;
+            history[i].age + 128;
+        }
+        history[i].age /= 2;
+    }
+    return index;
+}
+
+
+// Finds least frequently usef page
+// if there are two then use fifo to break the tie
+// return index for least frequently used element
+function findAgingVictim(history){
+    var index = null;// index for element of interest
+    var sCount = null; // smallest count
+    var sAge = null; // smallest age
+
+    // Abort if there is no elements in history
+    if(history.length<1){
+        return -1;
+    }
+
+
+    // Find smallest count
+    index = 0;
+
+    // Find smallest age
+    sAge = history[0].age;
+    for (var i = 0; i < history.length; i++){
+        if(history[i].age<sAge){
+            sAge = history[i].age;
+            index = i;
+        }
+    }
+    
+    sCount = history[index].count;
+    for (var i = 1; i < history.length; i++){
+        if(history[i].age==sAge && history[i].count<sCount){
+            sCount = history[i].count;
+            index = i;
+        }
+    }
+
+
+
+
+
+
+
+
+
+    // Find smallest count
+    index = 0;
+    sCount = history[0].count;
+    for (var i = 1; i < history.length; i++){
+        if(history[i].count<sCount){
+            sCount = history[i].count;
+            index = i;
+        }
+    }
+    // Find smallest age
+    sAge = history[index].age;
+    for (var i = 0; i < history.length; i++){
+        if(history[i].count == sCount && history[i].age<sAge){
+            sAge = history[i].age;
+            index = i;
+        }
+    }
+
+    return index;
+}
+
+//---- Aging END ---- //
