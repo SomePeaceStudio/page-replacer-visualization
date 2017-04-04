@@ -27,6 +27,7 @@ var chartData = [
 
 // Define chart object
 var faultChart = new CanvasJS.Chart("chart-container",{
+    animationEnabled: true,
     title:{
         text: "Page faults"
     },

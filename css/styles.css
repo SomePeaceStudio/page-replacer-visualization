@@ -46,6 +46,7 @@ body{
 
 .authors-wrap button {
     width: 100%;
+    margin: 0;
     font-size: 18px;
     height: 30px;
     cursor: pointer;
@@ -104,10 +105,24 @@ h1, h3{
 }
 
 button{
-    margin: auto;
+    margin: 2px auto;
     width: 120px;
     height: 40px;
+    border: solid 1px #a8a8a8;
+    border-bottom: solid 2px #0046b2;
+    background: #e5e5e5;
+    transition-duration: 150ms;
 }
+
+button:hover {
+    background: #a8a8a8;
+}
+
+button:active{
+    background: #0046b2;
+    border-color: #0046b2;
+}
+
 .buttonContainer {
     margin-top: 40px;
     text-align: left;
