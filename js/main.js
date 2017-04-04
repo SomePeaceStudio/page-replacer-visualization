@@ -48,15 +48,21 @@ $(document).ready(function(){
     });
 
     $("#run-second-chance").click(function(){
-        runSecondChance();
+        if (validatePageData()){
+            runSecondChance();
+        }
     });
     
     $("#run-clock").click(function(){
-        runClock();
+        if (validatePageData()){
+            runClock();
+        }
     });
     
     $("#run-gclock").click(function(){
-        runGClock();
+        if (validatePageData()){
+            runGClock();
+        }
     });
 
     // Reset Everyting
@@ -160,11 +166,9 @@ var faultData = {
 function validatePageData(){
     var valid = /^((([0-9]+),)+[0-9]+)$/.test($('#page-data-input').val());
     if (!valid){
-        console.debug('invalid')
         spawnPageValidationError();
     }
     else{
-        console.debug('valid')
         despawnPageValidationError();
     }
     return valid;
