@@ -75,13 +75,8 @@ $(document).ready(function(){
                 genRandomData(length);
                 genRandomBufferSize(bufferMin,bufferMax);
 
-                runFifo();
-                runLru();
-                runRandom();
-                runOptimal();
-                runNfu();
-                runMru();
-                // TODO: add other algo functions
+                runAllAlogos();
+                
                 setProgressBar((i/times)*100);
                 if (i == times){
                     setTimeout(function(){
@@ -96,12 +91,7 @@ $(document).ready(function(){
 
     // Run all with input data provided
     $("#run-all").click(function(){
-        runFifo();
-        runLru();
-        runRandom();
-        runOptimal();
-        runNfu();
-        runMru();
+        runAllAlogos();
     });
 });
 
@@ -119,6 +109,17 @@ var faultData = {
     'random':[],
     'optimal':[]
 };
+
+// Execute all made algorithms
+function runAllAlgos(){
+    runFifo();
+    runLru();
+    runRandom();
+    runOptimal();
+    runNfu();
+    runMru();
+    // TODO add all other algorithms
+}
 
 // Return random integer in range [min,max]
 function getRandomInteger(min,max){
