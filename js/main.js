@@ -203,7 +203,7 @@ function processCollections() {
 
 // Return random integer in range [min,max]
 function getRandomInteger(min,max){
-    return Math.floor(Math.random()*(max))+min;
+    return Math.floor(Math.random()*(max-min+1))+min;
 }
 
 // Place random page input data in textarea
