@@ -112,6 +112,12 @@ $(document).ready(function(){
             createNewCollection();
             
             setTimeout(function(){
+                // I set to execute 0 times, do nothing and return
+                if (times === 0){
+                    hideSpinner();
+                    setProgressBar(100);
+                    return 0;
+                }
                 for (var i=1; i <= times; i++){
                     setTimeout(function(i){
                     randomizeInput();
