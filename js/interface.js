@@ -9,7 +9,7 @@ $(document).ready(function(){
 });
 
 // Chart column colors
-var colorList = ['#d43515', '#d47415', '#d49b2a', '#d4d420', '#94d415', '#2ad447', '#20d498', '#20d4d4', '#20b6d4', '#1594d4', '#1574d4', '#203ed4']
+var colorList = ['#d43515', '#d47415', '#d49b2a', '#d4d420', '#94d415', '#2ad447', '#20d498', '#20d4d4', '#20b6d4', '#1594d4', '#1574d4', '#203ed4'];
 
 // Define axis data
 var chartData = [
@@ -25,7 +25,7 @@ var chartData = [
                     {label: "NFU",y:0,color:colorList[9]},
                     {label: "Random",y:0,color:colorList[10]},
                     {label: "Optimal",y:0,color:colorList[11]},
-                    {label: "GClock",y:0,color:colorList[12]},
+                    {label: "GClock",y:0,color:colorList[12]}
                     ];
 
 // Define chart object

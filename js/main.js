@@ -46,32 +46,36 @@ $(document).ready(function(){
             runMru();
         }
     });
-
+    
+    // Execute Second chance button
     $("#run-second-chance").click(function(){
         if (validatePageData()){
             runSecondChance();
         }
     });
     
+    // Execute Clock button
     $("#run-clock").click(function(){
         if (validatePageData()){
             runClock();
         }
     });
     
+    // Execute Gclock button
     $("#run-gclock").click(function(){
         if (validatePageData()){
             runGClock();
         }
     });
-
+    
+    // Execute Aging button
     $("#run-aging").click(function(){
         if (validatePageData()){
             runAging();
         }
     });
 
-    // Reset Everyting
+    // Reset Everyting: clear tables and graph button
     $("#clear-all").click(function(){
             clearAll();
     });
@@ -79,28 +83,26 @@ $(document).ready(function(){
 
     // Execute Random data button
     $("#rnd-gen").click(function(){
-        var lengthMin = parseInt($('#rnd-page-length-min').val());
-        var lengthMax = parseInt($('#rnd-page-length-max').val());
-        var bufferMin = $('#rnd-buffer-min').val();
-        var bufferMax = $('#rnd-buffer-max').val();
-        genRandomData(getRandomInteger(lengthMin,lengthMax));
-        genRandomBufferSize(bufferMin,bufferMax);
+        randomizeInput();
     });
     
-    //Test all n times
+    //Test all algortihms n times button
     $("#test-all").click(function(){
         if (validatePageData()){
             setTimeout(function(){
                 showSpinner();
-            },0)
+                setProgressBar(0);
+            },0);
+            // Get how many times to execute
             var times = parseInt($('#execute-times').val());
+            // Hardcoded limits 0 - 200 times
             if (times < 0) {
                 times = 0;
             }
             else if (times > 200) {
                 times = 200;    // should have some upper limit as well for safety :)
             }
-            setProgressBar(0);
+            
             individualAlgorithms = false;
             
             if (times === 0) {
@@ -112,11 +114,7 @@ $(document).ready(function(){
             setTimeout(function(){
                 for (var i=1; i <= times; i++){
                     setTimeout(function(i){
-                    var length = $('#rnd-page-length').val();
-                    var bufferMin = $('#rnd-buffer-min').val();
-                    var bufferMax = $('#rnd-buffer-max').val();
-                    genRandomData(length);
-                    genRandomBufferSize(bufferMin,bufferMax);
+                    randomizeInput();
 
                     runAllAlgos();
 
@@ -130,7 +128,7 @@ $(document).ready(function(){
                     }
                 },0,i);
             }
-            },10)
+            },10);
         }
     });
 
@@ -168,6 +166,16 @@ var faultData = {
     'optimal':[],
     'gclock':[]
 };
+
+// Randomize input data
+function randomizeInput(){
+    var lengthMin = parseInt($('#rnd-page-length-min').val());
+    var lengthMax = parseInt($('#rnd-page-length-max').val());
+    var bufferMin = $('#rnd-buffer-min').val();
+    var bufferMax = $('#rnd-buffer-max').val();
+    genRandomData(getRandomInteger(lengthMin,lengthMax));
+    genRandomBufferSize(bufferMin,bufferMax);
+}
 
 // Check if page-data-input is in valid format
 function validatePageData(){
@@ -252,7 +260,7 @@ function getAveragePageFault(algo){
         return 0;
     }
     var sum = 0;
-    for (i in faultData[algo]){
+    for (var i in faultData[algo]){
         sum += parseInt(faultData[algo][i]);
     }
     return sum/faultData[algo].length;
@@ -310,7 +318,7 @@ function updateChart(){
     
     // Order data
     chartData.sort(compareChartColumns);
-    for (i in chartData){
+    for (var i in chartData){
         chartData[i].x = parseInt(i);
     }
     
@@ -319,7 +327,7 @@ function updateChart(){
 
 // Get chart index from chart label
 function getLabelIndex(label){
-    for (i in chartData){
+    for (var i in chartData){
         if (chartData[i].label == label){
             return i;
         }
@@ -342,7 +350,7 @@ function compareChartColumns(first,second){
 
 // Reset all charts / data
 function clearAll(){
-    for (obj in faultData){
+    for (var obj in faultData){
         faultData[obj]=[];
         updateChart();
     }
@@ -824,7 +832,7 @@ function fifo(data, bs){
                     data:[], // buffer data
                     pageFaultIdx: -1    // index where was page fault
                                         // -1 for page hit
-                 } 
+                 } ;
     var pageFaults = 0;
     var pageHits = 0;
 
@@ -852,7 +860,7 @@ function fifo(data, bs){
 
         // If buffer not full: add new page
         if(buffer.data.length<bs){
-            history.push({page:data[i],age: age})
+            history.push({page:data[i],age: age});
             updateBuffer(buffer,history,history.length-1);
             pageFaults++;
             age++;
@@ -895,7 +903,7 @@ function lru(data, bs){
                     data:[], // buffer data
                     pageFaultIdx: -1    // index where was page fault
                                         // -1 for page hit
-                 } 
+                 }; 
     var pageFaults = 0;
     var pageHits = 0;
 
@@ -965,7 +973,7 @@ function random(data, bs){
                     data:[], // buffer data
                     pageFaultIdx: -1    // index where was page fault
                                         // -1 for page hit
-                 } 
+                 }; 
     var pageFaults = 0;
     var pageHits = 0;
 
@@ -994,7 +1002,7 @@ function random(data, bs){
 
         // If buffer not full: add new page
         if(buffer.data.length<bs){
-            history.push({page:data[i],age: age})
+            history.push({page:data[i],age: age});
             updateBuffer(buffer,history,history.length-1);
             pageFaults++;
             age++;
@@ -1077,7 +1085,7 @@ function optimal(data, bs){
                     data:[], // buffer data
                     pageFaultIdx: -1    // index where was page fault
                                         // -1 for page hit
-                 } 
+                 }; 
     var pageFaults = 0;
     var pageHits = 0;
 
@@ -1106,7 +1114,7 @@ function optimal(data, bs){
 
         // If buffer not full: add new page
         if(buffer.data.length<bs){
-            history.push({page:data[i],age: age})
+            history.push({page:data[i],age: age});
             updateBuffer(buffer,history,history.length-1);
             pageFaults++;
             age++;
@@ -1149,7 +1157,7 @@ function nfu(data, bs){
                     data:[], // buffer data
                     pageFaultIdx: -1    // index where was page fault
                                         // -1 for page hit
-                 } 
+                 };
     var pageFaults = 0;
     var pageHits = 0;
 
@@ -1179,7 +1187,7 @@ function nfu(data, bs){
 
         // If buffer not full: add new page
         if(buffer.data.length<bs){
-            history.push({page:data[i],age: age, count: 1})
+            history.push({page:data[i],age: age, count: 1});
             updateBuffer(buffer,history,history.length-1);
             pageFaults++;
             age++;
@@ -1257,7 +1265,7 @@ function mru(data, bs){
                     data:[], // buffer data
                     pageFaultIdx: -1    // index where was page fault
                                         // -1 for page hit
-                 } 
+                 }; 
     var pageFaults = 0;
     var pageHits = 0;
 
@@ -1287,7 +1295,7 @@ function mru(data, bs){
 
         // If buffer not full: add new page
         if(buffer.data.length<bs){
-            history.push({page:data[i],age: age})
+            history.push({page:data[i],age: age});
             updateBuffer(buffer,history,history.length-1);
             pageFaults++;
             age++;
@@ -1351,7 +1359,7 @@ function secondChance(data, bs){
                     data:[], // buffer data
                     pageFaultIdx: -1    // index where was page fault
                                         // -1 for page hit
-                 } 
+                 }; 
     var pageFaults = 0;
     var pageHits = 0;
 
@@ -1380,7 +1388,7 @@ function secondChance(data, bs){
 
         // If buffer not full: add new page
         if(buffer.data.length<bs){
-            history.push({page:data[i],age: age})
+            history.push({page:data[i],age: age});
             updateBuffer(buffer,history,history.length-1);
             pageFaults++;
             age++;
@@ -1460,7 +1468,7 @@ function clock(data, bs){
                     data:[], // buffer data
                     pageFaultIdx: -1    // index where was page fault
                                         // -1 for page hit
-                 } 
+                 }; 
     var pageFaults = 0;
     var pageHits = 0;
     var hand = 0;
@@ -1491,7 +1499,7 @@ function clock(data, bs){
 
         // If buffer not full: add new page
         if(buffer.data.length<bs){
-            history.push({page:data[i]})
+            history.push({page:data[i]});
             var currElem = history.length - 1;
             history[currElem].referenced = 0;
             updateBuffer(buffer,history,history.length-1);
@@ -1574,7 +1582,7 @@ function gClock(data, bs){
                     data:[], // buffer data
                     pageFaultIdx: -1    // index where was page fault
                                         // -1 for page hit
-                 } 
+                 }; 
     var pageFaults = 0;
     var pageHits = 0;
     var hand = 0;
@@ -1605,7 +1613,7 @@ function gClock(data, bs){
 
         // If buffer not full: add new page
         if(buffer.data.length<bs){
-            history.push({page:data[i]})
+            history.push({page:data[i]});
             var currElem = history.length - 1;
             history[currElem].counter = 0;
             updateBuffer(buffer,history,history.length-1);
@@ -1688,7 +1696,7 @@ function aging(data, bs){
                     data:[], // buffer data
                     pageFaultIdx: -1    // index where was page fault
                                         // -1 for page hit
-                 } 
+                 }; 
     var pageFaults = 0;
     var pageHits = 0;
 
@@ -1716,7 +1724,7 @@ function aging(data, bs){
 
         // If buffer not full: add new page
         if(buffer.data.length<bs){
-            history.push({page:data[i],age: 128, count: 1})
+            history.push({page:data[i],age: 128, count: 1});
             updateBuffer(buffer,history,history.length-1);
             pageFaults++;
             continue;
