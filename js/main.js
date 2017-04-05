@@ -79,10 +79,11 @@ $(document).ready(function(){
 
     // Execute Random data button
     $("#rnd-gen").click(function(){
-        var length = $('#rnd-page-length').val();
+        var lengthMin = parseInt($('#rnd-page-length-min').val());
+        var lengthMax = parseInt($('#rnd-page-length-max').val());
         var bufferMin = $('#rnd-buffer-min').val();
         var bufferMax = $('#rnd-buffer-max').val();
-        genRandomData(length);
+        genRandomData(getRandomInteger(lengthMin,lengthMax));
         genRandomBufferSize(bufferMin,bufferMax);
     });
     

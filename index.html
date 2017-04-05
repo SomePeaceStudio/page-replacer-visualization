@@ -47,15 +47,26 @@
             <div class="input-section">
                 <div class="input-field-wrap">
                     <h4>Page length</h4>
-                    <input id="rnd-page-length" value="16" type="number">
+                    <div class="range-input-wrap">
+                        <h3>Min</h3>
+                        <input id="rnd-page-length-min" value="16" type="number">
+                    </div>
+                    <div class="range-input-wrap">
+                        <h3>Max</h3>
+                        <input id="rnd-page-length-max" value="16" type="number">
+                    </div>
+                        
                 </div>
                 <div class="input-field-wrap">
-                    <h4>Buffer size min</h4>
-                    <input id="rnd-buffer-min" value="3" type="number">
-                </div>
-                <div class="input-field-wrap">
-                    <h4>Buffer size max</h4>
-                    <input id="rnd-buffer-max" value="6" type="number">
+                    <h4>Buffer size</h4>
+                    <div class="range-input-wrap">
+                        <h3>Min</h3>
+                        <input id="rnd-buffer-min" value="3" type="number">
+                    </div>
+                    <div class="range-input-wrap">
+                        <h3>Max</h3>
+                        <input id="rnd-buffer-max" value="3" type="number">
+                    </div>
                 </div>
                 <div class="input-field-wrap">
                     <button id="rnd-gen">Generate random data</button>

@@ -104,6 +104,24 @@ h1, h3{
     resize: vertical;
 }
 
+.range-input-wrap{
+    float:left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.range-input-wrap h3{
+    margin: 0 2px 2px 0;
+    float:left;
+    font-weight: normal;
+    /*line-height: 21px;*/
+    font-size: 18px;
+}
+
+.range-input-wrap input{
+    width: 40px;
+}
+
 button{
     margin: 2px auto;
     width: 120px;
