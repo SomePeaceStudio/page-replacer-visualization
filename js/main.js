@@ -109,7 +109,7 @@ $(document).ready(function(){
                 $('#results-wrap').hide();
             }
             
-            createNewCollection();
+            createNewCollection('All algorithms', times);
             
             setTimeout(function(){
                 // I set to execute 0 times, do nothing and return
@@ -209,10 +209,28 @@ function runAllAlgos(){
     runAging();
     // TODO add all other algorithms
 }
+
 // Create new collection (HTML container) for results
-function createNewCollection() {
+function createNewCollection(algorithm, executionsCount) {
     resultCollections++;
-    $resultsArea.append('<div class="collection collection' + resultCollections + '"><div class="buttonContainer"><button class="showHideButton">Hide</button></div></div>');
+    var htmlContents = '<div class="collection collection' + resultCollections + '"><div class="buttonContainer"><button class="showHideButton">Hide</button><span class="details">';
+    if (algorithm) {
+        htmlContents += algorithm + ' - ';
+    }
+    
+    var dateTime = new Date();
+    var day = (dateTime.getDate().length > 1)? dateTime.getDate() : '0'+dateTime.getDate();
+    var month = (dateTime.getMonth().length > 1)? dateTime.getMonth() : '0'+dateTime.getMonth();
+    var seconds = (dateTime.getSeconds() > 9)? dateTime.getSeconds() : '0'+dateTime.getSeconds();
+    var minutes = (dateTime.getMinutes() > 9)? dateTime.getMinutes() : '0'+dateTime.getMinutes();
+    var hours = (dateTime.getHours() > 9)? dateTime.getHours() : '0'+dateTime.getHours();
+    
+    htmlContents += day + '.' + month + '.' + dateTime.getFullYear() + '. ' + hours + ':' + minutes + ':' + seconds + ' ';
+    if (executionsCount) {
+        htmlContents += '/ ' + executionsCount + ' execution times';
+    }
+    htmlContents += '</span></div></div>';
+    $resultsArea.append(htmlContents);
 }
 
 // Make show/hide button visible for each collection, if there are several of them
@@ -411,6 +429,7 @@ function runFifo(){
     $collection.append("<h4>FIFO : "+results.pageFaults+" page faults!</h4>");
     $collection.append("<h4>FIFO Time: " + (fifoEnd-fifoStart)/1000 + "s</h4>");
     $collection.append("<hr>");
+    processCollections();
 
     // Update chart
     updateChart();
@@ -601,6 +620,7 @@ function runSecondChance(){
     $collection.append("<h4>Second chance : "+results.pageFaults+" page faults!</h4>");
     $collection.append("<h4>Second chance Time: " + (End-Start)/1000 + "s</h4>");
     $collection.append("<hr>");
+    processCollections();
 
     // Update chart
     updateChart();
@@ -632,6 +652,7 @@ function runClock(){
     $collection.append("<h4>Clock: "+results.pageFaults+" page faults!</h4>");
     $collection.append("<h4>Clock Time: " + (End-Start)/1000 + "s</h4>");
     $collection.append("<hr>");
+    processCollections();
 
     // Update chart
     updateChart();
@@ -663,6 +684,7 @@ function runGClock(){
     $collection.append("<h4>GClock: "+results.pageFaults+" page faults!</h4>");
     $collection.append("<h4>GClock Time: " + (End-Start)/1000 + "s</h4>");
     $collection.append("<hr>");
+    processCollections();
 
     // Update chart
     updateChart();
@@ -694,6 +716,7 @@ function runAging(){
     $collection.append("<h4>Aging: "+results.pageFaults+" page faults!</h4>");
     $collection.append("<h4>Aging Time: " + (End-Start)/1000 + "s</h4>");
     $collection.append("<hr>");
+    processCollections();
 
     // Update chart
     updateChart();
@@ -849,7 +872,7 @@ function fifo(data, bs){
     var idx; // Index for element of interest
       
     if (individualAlgorithms) {
-        createNewCollection();
+        createNewCollection('FIFO');
     }
     renderBufferInit(bs);
     for (var i = 0; i < data.length; i++){
@@ -921,7 +944,7 @@ function lru(data, bs){
 
         
     if (individualAlgorithms) {
-        createNewCollection();
+        createNewCollection('LRU');
     }
     renderBufferInit(bs);
     for (var i = 0; i < data.length; i++){
@@ -991,7 +1014,7 @@ function random(data, bs){
 
         
     if (individualAlgorithms) {
-        createNewCollection();
+        createNewCollection('Random');
     }
     renderBufferInit(bs);
     for (var i = 0; i < data.length; i++){
@@ -1103,7 +1126,7 @@ function optimal(data, bs){
 
         
     if (individualAlgorithms) {
-        createNewCollection();
+        createNewCollection('Optimal');
     }
     renderBufferInit(bs);
     for (var i = 0; i < data.length; i++){
@@ -1175,7 +1198,7 @@ function nfu(data, bs){
 
         
     if (individualAlgorithms) {
-        createNewCollection();
+        createNewCollection('NFU');
     }
     renderBufferInit(bs);
     for (var i = 0; i < data.length; i++){
@@ -1283,7 +1306,7 @@ function mru(data, bs){
 
         
     if (individualAlgorithms) {
-        createNewCollection();
+        createNewCollection('MRU');
     }
     renderBufferInit(bs);
     for (var i = 0; i < data.length; i++){
@@ -1376,7 +1399,7 @@ function secondChance(data, bs){
     var idx; // Index for element of interest
     
     if (individualAlgorithms) {
-        createNewCollection();
+        createNewCollection('Second chance');
     }
     renderBufferInit(bs);
     for (var i = 0; i < data.length; i++){
@@ -1485,7 +1508,7 @@ function clock(data, bs){
     var idx; // Index for element of interest
     
     if (individualAlgorithms) {
-        createNewCollection();
+        createNewCollection('Clock');
     }
     renderBufferInit(bs);
     for (var i = 0; i < data.length; i++){
@@ -1599,7 +1622,7 @@ function gClock(data, bs){
     var idx; // Index for element of interest
 
     if (individualAlgorithms) {
-        createNewCollection();
+        createNewCollection('gClock');
     }
     renderBufferInit(bs);
     for (var i = 0; i < data.length; i++){
@@ -1712,7 +1735,7 @@ function aging(data, bs){
     var idx; // Index for element of interest
 
     if (individualAlgorithms) {
-        createNewCollection();
+        createNewCollection('Aging');
     }
     renderBufferInit(bs);
     for (var i = 0; i < data.length; i++){
