@@ -220,7 +220,10 @@ function createNewCollection(algorithm, executionsCount) {
     
     var dateTime = new Date();
     var day = (dateTime.getDate().length > 1)? dateTime.getDate() : '0'+dateTime.getDate();
-    var month = (dateTime.getMonth().length > 1)? dateTime.getMonth() : '0'+dateTime.getMonth();
+    var month = parseInt(dateTime.getMonth()) + 1;
+    if (month < 10) {
+        month = '0' + month;
+    }
     var seconds = (dateTime.getSeconds() > 9)? dateTime.getSeconds() : '0'+dateTime.getSeconds();
     var minutes = (dateTime.getMinutes() > 9)? dateTime.getMinutes() : '0'+dateTime.getMinutes();
     var hours = (dateTime.getHours() > 9)? dateTime.getHours() : '0'+dateTime.getHours();
