@@ -364,6 +364,8 @@ function clearAll(){
     $("#results-wrap").hide();
     resultCollections = 0;
     individualAlgorithms = true;
+    setProgressBar(0);
+    hideSpinner();
 }
 
 function formatTables() {
