@@ -281,14 +281,14 @@ function updateChart(){
     chartData[getLabelIndex('Clock')].y = getAveragePageFault('clock');
     chartData[getLabelIndex('Clock')].toolTipContent = "{label}: {y} page faults \n"+faultData['clock'].length+" executions";
     
-    chartData[getLabelIndex('Clock pro')].y = getAveragePageFault('clockPro');
-    chartData[getLabelIndex('Clock pro')].toolTipContent = "{label}: {y} page faults \n"+faultData['clockPro'].length+" executions";
+//    chartData[getLabelIndex('Clock pro')].y = getAveragePageFault('clockPro');
+//    chartData[getLabelIndex('Clock pro')].toolTipContent = "{label}: {y} page faults \n"+faultData['clockPro'].length+" executions";
     
-    chartData[getLabelIndex('WSclock')].y = getAveragePageFault('wsclock');
-    chartData[getLabelIndex('WSclock')].toolTipContent = "{label}: {y} page faults \n"+faultData['wsclock'].length+" executions";
+//    chartData[getLabelIndex('WSclock')].y = getAveragePageFault('wsclock');
+//    chartData[getLabelIndex('WSclock')].toolTipContent = "{label}: {y} page faults \n"+faultData['wsclock'].length+" executions";
     
-    chartData[getLabelIndex('CAR')].y = getAveragePageFault('car');
-    chartData[getLabelIndex('CAR')].toolTipContent = "{label}: {y} page faults \n"+faultData['car'].length+" executions";
+//    chartData[getLabelIndex('CAR')].y = getAveragePageFault('car');
+//    chartData[getLabelIndex('CAR')].toolTipContent = "{label}: {y} page faults \n"+faultData['car'].length+" executions";
     
     chartData[getLabelIndex('LRU')].y = getAveragePageFault('lru');
     chartData[getLabelIndex('LRU')].toolTipContent = "{label}: {y} page faults \n"+faultData['lru'].length+" executions";
